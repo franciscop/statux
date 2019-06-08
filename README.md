@@ -1,10 +1,10 @@
-# Atama
+# Statux
 
 A better store for React state management:
 
 ```js
 // src/App.js
-import Store, { useStore } from 'atama';
+import Store, { useStore } from 'statux';
 import React from 'react';
 import User from './User';
 
