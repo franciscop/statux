@@ -1,6 +1,6 @@
 {
   "name": "statux",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "React state management made awesome",
   "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
   "main": "index.min.js",
