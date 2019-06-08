@@ -1,4 +1,4 @@
-# Statux
+# Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![gzip size](https://img.badgesize.io/franciscop/statux/master/statux.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/statux.min.js)
 
 A better store for React state management:
 
