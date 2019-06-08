@@ -4,7 +4,6 @@
   "description": "React state management made awesome",
   "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
   "main": "index.min.js",
-  "repository": "git@github.com:franciscop/statux.git",
   "scripts": {
     "build": "webpack -c",
     "test": "jest --coverage --forceExit"
@@ -18,6 +17,8 @@
     "manage",
     "change"
   ],
+  "homepage": "https://github.com/franciscop/statux#readme",
+  "repository": "git@github.com:franciscop/statux.git",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
