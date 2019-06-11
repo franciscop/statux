@@ -14,7 +14,8 @@ const withValue = (args, update) => value => {
   return update(value);
 };
 
-export const useStore = key => useContext(Context);
+// const { user, setUser } = useStore();
+export const useStore = () => useContext(Context);
 
 // <State>{({ user, books }) => <div>{user}</div>}</State>
 export const State = ({ render, children, ...props }) => {
