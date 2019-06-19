@@ -17,6 +17,8 @@ const withValue = (args, update) => value => {
 // const { user, setUser } = useStore();
 export const useStore = () => useContext(Context);
 
+export const useSelector = fn => fn(useContext(Context));
+
 // <State>{({ user, books }) => <div>{user}</div>}</State>
 export const State = ({ render, children, ...props }) => {
   const store = useStore();

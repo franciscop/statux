@@ -66,11 +66,12 @@ export default () => {
 There are 4 exports; a default one, and three named ones:
 
 ```js
-import Store, { useStore, State, useActions } from 'statux';
+import Store, { useStore, useSelector, useActions, State } from 'statux';
 ```
 
 - **`Store`**: the main wrapper, every other component should be used within the tree of this.
 - **`useStore()`**: the main way of extracting data, it will return the state along with the setters.
+- **`useSelector()`**: accepts a selector that will receive the current state and return a single value.
 - **`State`**: a convenient Render Prop that allows you to extract simple state inline.
 - **`useActions()`**: some default actions that you can use straight away to simplify your code and avoid mutations.
 
