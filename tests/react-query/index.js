@@ -1,6 +1,7 @@
 import { create, act } from "react-test-renderer";
 
 import toHtml from "./json-to-html.js";
+import delay from "delay";
 
 const $ = function(obj, options) {
   if (!(this instanceof $)) {
@@ -15,10 +16,6 @@ $.prototype.attr = function(key) {
   return this.inst.toTree().props[key];
 };
 
-$.prototype.find = function(key) {
-  return this.inst.root.findByType(key);
-};
-
 $.prototype.html = function(options = {}) {
   return toHtml(this.json(options), options);
 };
@@ -26,11 +23,7 @@ $.prototype.html = function(options = {}) {
 const toJson = (json, options) => {
   const props = {};
   for (let key in json.props) {
-    if (/^on/.test(key)) {
-      if (options.events) {
-        props[key] = json.props[key];
-      }
-    } else {
+    if (!/^on/.test(key)) {
       props[key] = json.props[key];
     }
   }
@@ -43,11 +36,7 @@ $.prototype.json = function(options = {}) {
 };
 
 $.prototype.click = function() {
-  let res;
-  act(() => {
-    res = this.inst.toJSON().props.onClick();
-  });
-  return res;
+  return this.inst.toJSON().props.onClick();
 };
 
 export default $;

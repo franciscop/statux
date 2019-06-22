@@ -5,49 +5,37 @@ import React from "react";
 import $ from "./react-query";
 import delay from "delay";
 
+// The HTML list; we're not testing this, just a helper
+const DisplayList = ({ items, onClick }) => (
+  <ul onClick={onClick}>
+    {items.map(item => (
+      <li key={item}>{item}</li>
+    ))}
+  </ul>
+);
+
 describe("List", () => {
   // We define and test a items:
   const List = () => {
-    const { items, setItems } = useStore();
+    const [items, setItems] = useStore("items");
     const onClick = async e => setItems([...items, items.length]);
-    return (
-      <ul onClick={onClick}>
-        {items.map(item => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    );
+    return <DisplayList items={items} onClick={onClick} />;
   };
 
   it("should have a items", () => {
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.attr("items")).toEqual([]);
   });
 
   it("should increment items", async () => {
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
     $list.click();
     expect($list.html()).toBe(`<ul><li>0</li></ul>`);
   });
 
   it("should double increment items", async () => {
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
     $list.click();
     $list.click();
@@ -58,23 +46,11 @@ describe("List", () => {
   it("can use prebuilt append", async () => {
     // We define and test a items:
     const List = () => {
-      const { items, setItems } = useStore();
+      const [items, setItems] = useStore("items");
       const onClick = async e => setItems.append(items.length);
-      return (
-        <ul onClick={onClick}>
-          {items.map(item => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      );
+      return <DisplayList items={items} onClick={onClick} />;
     };
-
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
     $list.click();
     $list.click();
@@ -85,23 +61,11 @@ describe("List", () => {
   it("can use prebuilt prepend", async () => {
     // We define and test a items:
     const List = () => {
-      const { items, setItems } = useStore();
+      const [items, setItems] = useStore("items");
       const onClick = async e => setItems.prepend(items.length);
-      return (
-        <ul onClick={onClick}>
-          {items.map(item => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      );
+      return <DisplayList items={items} onClick={onClick} />;
     };
-
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
     $list.click();
     $list.click();
@@ -112,23 +76,11 @@ describe("List", () => {
   it("can use prebuilt prepend with function", async () => {
     // We define and test a items:
     const List = () => {
-      const { items, setItems } = useStore();
+      const [items, setItems] = useStore("items");
       const onClick = e => setItems.prepend(items => items.length);
-      return (
-        <ul onClick={onClick}>
-          {items.map(item => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      );
+      return <DisplayList items={items} onClick={onClick} />;
     };
-
-    const $list = $(
-      <Store items={[]}>
-        <List />
-      </Store>
-    );
-
+    const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
     $list.click();
     $list.click();
