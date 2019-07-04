@@ -19,7 +19,7 @@ const setBooks = useActions('books');
 const { append, prepend, ...actions } = useActions('books');
 ```
 
-Jump to [`<Store>`](), [`useStore()`](), [`useSelector()`](), [`useActions()`]().
+Jump to [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions).
 
 ## Getting started
 
@@ -71,8 +71,8 @@ There are four pieces exported from the library:
 
 - [**`<Store>`**](#store): the default export that should wrap your whole App. Its props define the store structure.
 - [**`useStore()`**](#usestore): extracts a part of the store for data retrieval and manipulation. Accepts a parameter to specify what fragment of the store to use.
-- [**`useSelector()`**](useselector): accepts a selector that will receive the current state and return a single value. Returns the whole state if no selector was given.
-- [**`useActions()`**](useactions): some default actions that you can use straight away to simplify your code and avoid mutations.
+- [**`useSelector()`**](#useselector): accepts a selector that will receive the current state and return a single value. Returns the whole state if no selector was given.
+- [**`useActions()`**](#useactions): some default actions that you can use straight away to simplify your code and avoid mutations.
 
 
 
@@ -114,7 +114,7 @@ export default () => (
 ```
 
 
-### useStore(selector)
+### useStore()
 
 This is a React hook to handle a fragment of state. It returns a structure similar to React's `useState()`:
 
@@ -172,7 +172,7 @@ setUser.assign({ name: 'Francisco' });
 See a full description of how the setter works on [the `useActions()` section](useactions).
 
 
-### useSelector(selector)
+### useSelector()
 
 This React hook retrieves a fragment of the state:
 
@@ -232,7 +232,10 @@ const bestFriend = useSelector('friends.0');
 const setState = useActions();
 const setUser = useActions('user');
 const setName = useActions('user.name');
-const { rename } = useActions('user', { rename: user => ({ ...user, name })});
+
+setName('Francisco');
+setName(name => 'San ' + name);
+setName((name, key, state) => { ... });
 ```
 
 
@@ -244,7 +247,7 @@ const { rename } = useActions('user', { rename: user => ({ ...user, name })});
 
 ### API calls
 
-## Example - Pokemon Website
+## Tutorial - Pokemon Website
 
 In this example we are going to build a fully working pokedex! It will show a list of pokemon, and whether the user has captured them or not. It will include authentication and asynchronously loading the data.
 
