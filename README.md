@@ -116,7 +116,7 @@ export default () => (
 
 ### useStore()
 
-This is a React hook to handle a fragment of state. It returns a structure similar to React's `useState()`:
+This is a React hook to handle a fragment of state. It returns an array similar to React's `useState()`:
 
 ```js
 import { useStore } from 'statux';
@@ -124,7 +124,9 @@ import { useStore } from 'statux';
 export default () => {
   const [user, setUser] = useStore('user');
   return () => (
-    <div>{user ? user.name : 'Anonymous'}</div>
+    <div onClick={e => setUser({ name: 'Maria' })}>
+      {user ? user.name : 'Anonymous'}
+    </div>
   );
 };
 ```
