@@ -73,7 +73,7 @@ export default () => {
 These are the reasons I made this instead of using `useState()` or `redux`:
 
 - **Frozen solid**: `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs benefit from this avoiding common bugs.
-- **Nimble state**: start a small store that grows with your app. Since it does *not* use reducers, you remove a full layer of indirection. There is a cost though; refactoring a large codebase is more expensive.
+- **Nimble state**: start a small store that grows with your app. Since it does *not* use reducers, you [remove a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). There is a cost though; refactoring a large codebase is more expensive since your actions depend on the data structure.
 - **Semantic React**: with [*react hooks*](https://reactjs.org/docs/hooks-overview.html) and [*statux actions*](#useactions), creating components and modifying state feel right at home.
 
 
