@@ -1,4 +1,4 @@
-import Store, { useStore } from "../index.js";
+import Store, { useStore, useSelector } from "../index.js";
 
 import "babel-polyfill";
 import React from "react";
@@ -30,16 +30,16 @@ describe("List", () => {
   it("should increment items", async () => {
     const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
-    $list.click();
+    await $list.click();
     expect($list.html()).toBe(`<ul><li>0</li></ul>`);
   });
 
   it("should double increment items", async () => {
     const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
-    $list.click();
-    $list.click();
-    $list.click();
+    await $list.click();
+    await $list.click();
+    await $list.click();
     expect($list.html()).toBe(`<ul><li>0</li><li>1</li><li>2</li></ul>`);
   });
 
@@ -52,9 +52,9 @@ describe("List", () => {
     };
     const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
-    $list.click();
-    $list.click();
-    $list.click();
+    await $list.click();
+    await $list.click();
+    await $list.click();
     expect($list.html()).toBe(`<ul><li>0</li><li>1</li><li>2</li></ul>`);
   });
 
@@ -67,9 +67,9 @@ describe("List", () => {
     };
     const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
-    $list.click();
-    $list.click();
-    $list.click();
+    await $list.click();
+    await $list.click();
+    await $list.click();
     expect($list.html()).toBe(`<ul><li>2</li><li>1</li><li>0</li></ul>`);
   });
 
@@ -82,9 +82,23 @@ describe("List", () => {
     };
     const $list = $(<Store items={[]} children={<List />} />);
     expect($list.html()).toBe(`<ul></ul>`);
-    $list.click();
-    $list.click();
-    $list.click();
+    await $list.click();
+    await $list.click();
+    await $list.click();
     expect($list.html()).toBe(`<ul><li>2</li><li>1</li><li>0</li></ul>`);
+  });
+
+  it("can modify an item with the dot notation", async () => {
+    // We define and test a items:
+    const List = () => {
+      const items = useSelector("items");
+      const [item, setItem] = useStore("items.0");
+      const onClick = e => setItem(3);
+      return <DisplayList items={items} onClick={onClick} />;
+    };
+    const $list = $(<Store items={[0, 1, 2]} children={<List />} />);
+    expect($list.html()).toBe(`<ul><li>0</li><li>1</li><li>2</li></ul>`);
+    await $list.click();
+    expect($list.html()).toBe(`<ul><li>3</li><li>1</li><li>2</li></ul>`);
   });
 });

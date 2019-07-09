@@ -1,6 +1,6 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-A React state management library with hooks:
+A [cool](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html):
 
 ```js
 import Store, { useStore, useSelector, useActions } from 'statux';
@@ -20,6 +20,8 @@ const { append, prepend, ...actions } = useActions('books');
 ```
 
 Jump to [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions).
+
+
 
 ## Getting started
 
@@ -65,14 +67,24 @@ export default () => {
 ```
 
 
+
+## Why?
+
+These are the reasons I made this instead of using `useState()` or `redux`:
+
+- **Frozen solid**: `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs benefit from this avoiding common bugs.
+- **Nimble state**: start a small store that grows with your app. Since it does *not* use reducers, you remove a full layer of indirection. There is a cost though; refactoring a large codebase is more expensive.
+- **Semantic React**: with [*react hooks*](https://reactjs.org/docs/hooks-overview.html) and [*statux actions*](#useactions), creating components and modifying state feel right at home.
+
+
 ## API
 
 There are four pieces exported from the library:
 
 - [**`<Store>`**](#store): the default export that should wrap your whole App. Its props define the store structure.
-- [**`useStore()`**](#usestore): extracts a part of the store for data retrieval and manipulation. Accepts a parameter to specify what fragment of the store to use.
-- [**`useSelector()`**](#useselector): accepts a selector that will receive the current state and return a single value. Returns the whole state if no selector was given.
-- [**`useActions()`**](#useactions): some default actions that you can use straight away to simplify your code and avoid mutations.
+- [**`useStore(selector)`**](#usestore): extracts a part of the store for data retrieval and manipulation. Accepts a parameter to specify what fragment of the store to use.
+- [**`useSelector(selector)`**](#useselector): retrieve a specific part of the store state based on the selector or the whole state if none was given.
+- [**`useActions(selector)`**](#useactions): generate actions to modify the state while avoiding mutations. Includes default actions and can be extended.
 
 
 
@@ -93,7 +105,7 @@ export default () => (
 );
 ```
 
-When your state starts to grow, we recommend splitting it into a separated variable:
+When your state starts to grow - but not before - it is recommended to split it into a separated variable:
 
 ```js
 // src/App.js
@@ -116,7 +128,7 @@ export default () => (
 
 ### useStore()
 
-This is a React hook to handle a fragment of state. It returns an array similar to React's `useState()`:
+This is a [React hook](https://reactjs.org/docs/hooks-overview.html) to handle a fragment of state. It returns an array [similar to React's `useState()`](https://reactjs.org/docs/hooks-state.html):
 
 ```js
 import { useStore } from 'statux';
@@ -171,7 +183,7 @@ setUser(current => ({ ...current, name: 'Francisco' }));
 setUser.assign({ name: 'Francisco' });
 ```
 
-See a full description of how the setter works on [the `useActions()` section](useactions).
+See a full description of how the setter works on [the `useActions()` section](#useactions).
 
 
 ### useSelector()
@@ -243,11 +255,21 @@ setName((name, key, state) => { ... });
 
 ## Examples
 
+### Todo list
+
 ### Initial data loading
 
 ### Login and localStorage
 
 ### API calls
+
+### Reset initial state
+
+```js
+const { reset } = useStore();
+reset();
+```
+
 
 ## Tutorial - Pokemon Website
 
@@ -258,7 +280,7 @@ We are going to see each section individually, but first let's see the base of o
 ```js
 // src/App.js
 export default () => (
-  <Store user={false} pokemon={false}>
+  <Store user={null} pokemon={null}>
     <Router>
       <Switch>
         <Route exact to="/" component={PokemonList} />
@@ -277,16 +299,16 @@ How to authenticate the user with an API that returns a user:
 
 ```js
 // src/Auth.js
-import { useActions } from 'statux';
+import { useStore } from 'statux';
 import axios from 'axios';
 import Form from 'your-favourite-form-library';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 export default () => {
-  const setUser = useActions('user');
-  const login = async ({ email, password }) => {
-    const { data } = await axios.post('/login', { email, password });
-    setUser(user);
+  const [user, setUser] = useStore('user');
+  const login = async formData => {
+    const { data } = await axios.post('/login', formData);
+    setUser(data);
   };
   if (user) return <Redirect to="/user" />;
   return (

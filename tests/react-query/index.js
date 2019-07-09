@@ -1,3 +1,4 @@
+// In React 16.9 - https://github.com/facebook/react/issues/15379
 import { create, act } from "react-test-renderer";
 
 import toHtml from "./json-to-html.js";
@@ -36,7 +37,7 @@ $.prototype.json = function(options = {}) {
 };
 
 $.prototype.click = function() {
-  return this.inst.toJSON().props.onClick();
+  return act(async () => this.inst.toJSON().props.onClick());
 };
 
 export default $;
