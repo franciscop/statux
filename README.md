@@ -1,6 +1,6 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-A [cool](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html):
+An immutable and straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html):
 
 ```js
 import Store, { useStore, useSelector, useActions } from 'statux';
