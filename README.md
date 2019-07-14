@@ -326,26 +326,53 @@ Help me write these? :)
 
 ### Todo list
 
-See [the demo]():
+See [the **working demo**](https://codesandbox.io/s/elegant-tdd-c8jlq):
 
 ```js
 // App.js
 export default () => (
   <Store todo={[]}>
+    <h1>TODO List:</h1>
     <TodoList />
-    <AddTodo/ >
+    <AddTodo />
   </Store>
 );
 ```
 
 ```js
 // TodoList.js
+const Item = ({ index }) => {
+  const [{ text, done }, setItem] = useStore(`todo.${index}`);
+  return (
+    <li onClick={() => setItem({ text, done: !done })}>
+      {done ? <strike>{text}</strike> : text}
+    </li>
+  );
+};
+
 export default () => {
-  const list = useSelector('todo');
+  const [todos] = useStore("todo");
+  if (!todos.length) return null;
   return (
     <ul>
-      {list.map(item => <Item done={item.done}>{item.text}</Item>)}
+      {todos.map((item, i) => (
+        <Item key={item.text} index={i} />
+      ))}
     </ul>
+  );
+};
+```
+
+```js
+// AddTodo.js - uses a small form helper
+export default () => {
+  const { append } = useActions("todo");
+  return (
+    <form onSubmit={forn(append, { reset: true })}>
+      <p>Add item:</p>
+      <input name="text" placeholder="What do you plan?" />
+      <button>Add</button>
+    </form>
   );
 };
 ```
