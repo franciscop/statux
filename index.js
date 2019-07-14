@@ -102,9 +102,11 @@ export const useSelector = (sel = state => state) => {
 
 export const useActions = key => {
   const [state, setState] = useContext(Context);
-  return key
-    ? createActions(state[key], value => setState(dotSet(state, key, value)))
-    : createActions(state, setState);
+  if (!key) return createActions(state, setState);
+
+  const subState = dotGet(state, key);
+  const subSetter = value => setState(dotSet(state, key, value));
+  return createActions(subState, subSetter);
 };
 
 export const useStore = name => [useSelector(name), useActions(name)];

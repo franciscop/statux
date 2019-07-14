@@ -75,6 +75,26 @@ describe("List", () => {
     expect($list.html()).toBe(`<ul><li>3</li><li>1</li><li>2</li></ul>`);
   });
 
+  it("can modify a deep item in arrays", async () => {
+    // We define and test a items:
+    const List = () => {
+      const items = useSelector("items");
+      const [item, setItem] = useStore("items.0");
+      const onClick = e => setItem(item => ({ ...item, text: "x" }));
+      return (
+        <DisplayList
+          items={items.map(it => `${it.id}-${it.text}`)}
+          onClick={onClick}
+        />
+      );
+    };
+    const items = [{ id: 1, text: "a" }, { id: 2, text: "b" }];
+    const $list = $(<Store items={items} children={<List />} />);
+    expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li></ul>`);
+    await $list.click();
+    expect($list.html()).toBe(`<ul><li>1-x</li><li>2-b</li></ul>`);
+  });
+
   describe("array", () => {
     // List from MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype
     it(".fill() - all the items", async () => {
