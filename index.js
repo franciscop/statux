@@ -42,9 +42,9 @@ const resolve = (state, setState) => value => {
 
 // Create a swallow clone of the array so that it can be mutated in place
 const applyMutation = (state, setState) => mutation => {
-  return async (...args) => {
+  return (...args) => {
     const cloned = state.slice();
-    await mutation(cloned, ...args);
+    mutation(cloned, ...args);
     setState(cloned);
   };
 };
