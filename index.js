@@ -33,23 +33,64 @@ const freeze = obj => {
 };
 
 // Helper - parse the multi-type passed value and put that into the update fn
-const withValue = (state, update) => value => {
+const resolve = (state, setState) => value => {
   while (typeof value === "function") {
     value = value(freeze(state));
   }
-  return value && value.then ? value.then(update) : update(value);
+  return value && value.then ? value.then(setState) : setState(value);
+};
+
+// Create a swallow clone of the array so that it can be mutated in place
+const applyMutation = (state, setState) => mutation => {
+  return async (...args) => {
+    const cloned = state.slice();
+    await mutation(cloned, ...args);
+    setState(cloned);
+  };
 };
 
 const createActions = (state, setState) => {
   // Generic one `setUser('Francisco')`
-  const setter = withValue(state, setState);
+  const setter = resolve(state, setState);
 
-  // Arrays
-  setter.append = withValue(state, item => setState([...state, item]));
-  setter.prepend = withValue(state, item => setState([item, ...state]));
+  if (Array.isArray(state)) {
+    const mutate = applyMutation(state, setState); // <- INTERNAL USE ONLY
+
+    // Mutation methods
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Mutator_methods
+    setter.fill = mutate((items, ...args) => items.fill(...args));
+    setter.pop = mutate((items, ...args) => items.pop(...args));
+    setter.push = mutate((items, ...args) => items.push(...args));
+    setter.reverse = mutate((items, ...args) => items.reverse(...args));
+    setter.shift = mutate((items, ...args) => items.shift(...args));
+    setter.sort = mutate((items, ...args) => items.sort(...args));
+    setter.splice = mutate((items, ...args) => items.splice(...args));
+    setter.unshift = mutate((items, ...args) => items.unshift(...args));
+
+    // Change the array in some immutable way. Helpers to make it easier
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Accessor_methods
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Iteration_methods
+    setter.concat = (...args) => setState(state.concat(...args));
+    setter.slice = (...args) => setState(state.slice(...args));
+    setter.filter = (...args) => setState(state.filter(...args));
+    setter.map = (...args) => setState(state.map(...args));
+    setter.reduce = (...args) => setState(state.reduce(...args));
+    setter.reduceRight = (...args) => setState(state.reduceRight(...args));
+
+    // Aliases
+    setter.append = setter.push;
+    setter.prepend = setter.unshift;
+  }
+
+  if (typeof state === "object") {
+    setter.assign = (...args) => setState(Object.assign({}, state, ...args));
+
+    // Aliases
+    setter.extend = setter.assign;
+  }
 
   // Numbers
-  setter.add = withValue(state, num => setState(state + num));
+  setter.add = resolve(state, num => setState(state + num));
 
   return setter;
 };

@@ -1,6 +1,6 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-An immutable and straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html):
+An semantic and straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html):
 
 ```js
 import Store, { useStore, useSelector, useActions } from 'statux';
@@ -19,19 +19,19 @@ const setBooks = useActions('books');
 const { append, prepend, ...actions } = useActions('books');
 ```
 
-Jump to [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions).
+Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions),  [*examples*](#examples).
 
 
 
 ## Getting started
 
-First create a React project ([Create-React-App](https://github.com/facebook/create-react-app) is recommended) and install `statux`:
+First create a React project (try [Create-React-App](https://github.com/facebook/create-react-app)) and install `statux`:
 
 ```
 npm install statux
 ```
 
-Now we are going to initialize our store at the App root level with a couple of default values:
+Now we are going to initialize our store at the App root level with a couple of initial values:
 
 ```js
 // src/App.js
@@ -58,7 +58,7 @@ export default () => {
   const [user, setUser] = useStore('user');
   return (
     <div>
-      Hello  {user ? user.name : (
+      Hello {user ? user.name : (
         <button onClick={e => setUser({ name: 'Maria' })}>Login</button>
       )}
     </div>
@@ -70,11 +70,14 @@ export default () => {
 
 ## Why?
 
-These are the reasons I made this instead of using `useState()` or `redux`:
+There are few reasons why I created this instead of using `useState()` or `redux`:
 
+- **Direct manipulation**: change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). There is a cost though; refactoring a large codebase is more expensive since your actions depend on the state.
 - **Frozen solid**: `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs benefit from this avoiding common bugs.
-- **Nimble state**: start a small store that grows with your app. Since it does *not* use reducers, you [remove a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). There is a cost though; refactoring a large codebase is more expensive since your actions depend on the data structure.
 - **Semantic React**: with [*react hooks*](https://reactjs.org/docs/hooks-overview.html) and [*statux actions*](#useactions), creating components and modifying state feel right at home.
+
+Statux sits somewhere between React's local state and a fully fledged redux store. It's perfect for indie-devs and small-sized teams and projects.
+
 
 
 ## API
@@ -126,6 +129,7 @@ export default () => (
 ```
 
 
+
 ### useStore()
 
 This is a [React hook](https://reactjs.org/docs/hooks-overview.html) to handle a fragment of state. It returns an array [similar to React's `useState()`](https://reactjs.org/docs/hooks-state.html):
@@ -149,7 +153,7 @@ You can access deeper objects, but then make sure that their parent exists:
 import { useStore } from 'statux';
 
 export default () => {
-  // If `user` is null, this will fail
+  // If `user` is null, this will throw an error
   const [name, setName] = useStore('user.name');
   return () => (
     <div onClick={e => setName('John')}>
@@ -159,7 +163,7 @@ export default () => {
 };
 ```
 
-It accepts a *string* selector that will find the fragment of state desired, and also return a modifier for it. This hook behaves as `useSelector()` and `useActions()` together:
+It accepts a *string* selector that will find the fragment of state desired, and also return a modifier for it. This hook behaves as the basic `useSelector()` and `useActions()` together:
 
 ```js
 const [user, setUser] = useStore('user');
@@ -168,7 +172,7 @@ const user = useSelector('user');
 const setUser = useActions('user');
 ```
 
-> Note: useStore() only accepts either a string selector or no selector at all; it **does not** accept ~functions~ or ~objects~ as parameters.
+> Note: useStore() **only** accepts either a string selector or no selector at all; it **does not** accept ~functions~ or ~objects~ as parameters.
 
 The first returned parameter is the current value of that object in the store, and the second parameter is the setter. This setter is quite flexible:
 
@@ -183,7 +187,8 @@ setUser(current => ({ ...current, name: 'Francisco' }));
 setUser.assign({ name: 'Francisco' });
 ```
 
-See a full description of how the setter works on [the `useActions()` section](#useactions).
+See all the helpers of the setter on [the `useActions()` section](#useactions).
+
 
 
 ### useSelector()
@@ -207,7 +212,7 @@ You can access deeper objects, but then make sure that their parent exists:
 import { useStore } from 'statux';
 
 export default () => {
-  // If `user` is null, this will fail
+  // If `user` is null, this will throw an error
   const name = useSelector('user.name');
   return () => (
     <div>
@@ -242,18 +247,82 @@ const bestFriend = useSelector('friends.0');
 
 ### useActions()
 
+This React hook is used to modify the state in some way. Pass a selector to specify what state fragment to modify:
+
 ```js
 const setState = useActions();
 const setUser = useActions('user');
 const setName = useActions('user.name');
 
+// Update in multiple ways
 setName('Francisco');
 setName(name => 'San ' + name);
 setName((name, key, state) => { ... });
 ```
 
+These actions must be  executed within the appropriate callback:
+
+```js
+import { useActions } from 'statux';
+import Form from 'your-form-library';
+
+const ChangeName = () => {
+  const setName = useActions('user.name');
+  const onSubmit = ({ name }) => setName(name);
+  return <Form onSubmit={onSubmit}>...</Form>;
+};
+```
+
+It also returns helpers for immutable state as properties:
+
+```js
+// For Arrays: books = ['a', 'b', 'c']
+const setBooks = useActions('books');
+
+// Array methods made immutable
+setBooks.fill(1);  // [1, 1, 1]
+setBooks.pop(); // ['a', 'b']
+setBooks.push('d'); // ['a', 'b', 'c', 'd']
+setBooks.reverse(); // ['c', 'b', 'a']
+setBooks.shift(); // ['b', 'c']
+setBooks.sort(); // ['a', 'b', 'c']
+setBooks.splice(1, 1, 'x'); // ['a', 'x', 'c']
+setBooks.unshift('x'); // ['x', 'a', 'b', 'c']
+
+// Aliases
+setBooks.append('x');  // ['a', 'b', 'c', 'x']
+setBooks.prepend('x');  // ['x', 'a', 'b', 'c']
+```
+
+For immutable methods, provide helpers though you can also use the normal syntax:
+
+```js
+// books = ['a', 'b', 'c']
+const setBooks = useActions('books');
+setBooks(books => books.concat('d', 'e'));  // ['a', 'b', 'c', 'd', 'e']
+setBooks.concat('d', 'e');  // ['a', 'b', 'c', 'd', 'e']
+setBooks.slice(1, 1);  // ['b']
+setBooks.filter(item => /^(a|b)$/.test(item)); // ['a', 'b']
+setBooks.map(book => book + '!'); // ['a!', 'b!', 'c!']
+setBooks.reduce((all, book) => [...all, book + 'x'], []); // ['ax', 'bx', 'cx']
+setBooks.reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
+```
+
+These methods can be extracted right in the actions:
+
+```js
+const BookForm = () => {
+  const { append } = useActions('books');
+  const onSubmit = book => append(book);
+  return <Form onSubmit={onSubmit}>...</Form>;
+};
+```
+
+
 
 ## Examples
+
+Help me write these? :)
 
 ### Todo list
 
@@ -264,97 +333,3 @@ setName((name, key, state) => { ... });
 ### API calls
 
 ### Reset initial state
-
-```js
-const { reset } = useStore();
-reset();
-```
-
-
-## Tutorial - Pokemon Website
-
-In this example we are going to build a fully working pokedex! It will show a list of pokemon, and whether the user has captured them or not. It will include authentication and asynchronously loading the data.
-
-We are going to see each section individually, but first let's see the base of our App:
-
-```js
-// src/App.js
-export default () => (
-  <Store user={null} pokemon={null}>
-    <Router>
-      <Switch>
-        <Route exact to="/" component={PokemonList} />
-        <Route exact to="/login" component={Auth} />
-        <Route exact to="/user" component={User} />
-        <Route exact to="/:id" component={Pokemon} />
-      </Switch>
-    </Router>
-  </Store>
-);
-```
-
-### Auth
-
-How to authenticate the user with an API that returns a user:
-
-```js
-// src/Auth.js
-import { useStore } from 'statux';
-import axios from 'axios';
-import Form from 'your-favourite-form-library';
-import { Redirect } from 'react-router-dom';
-
-export default () => {
-  const [user, setUser] = useStore('user');
-  const login = async formData => {
-    const { data } = await axios.post('/login', formData);
-    setUser(data);
-  };
-  if (user) return <Redirect to="/user" />;
-  return (
-    <Form onSubmit={login}>
-      Email: <input name="email" type="email" />
-      Password: <input name="password" type="password" />
-      <button>Send</button>
-    </Form>
-  );
-};
-```
-
-
-### Loading pokemons async
-
-Now let's load the list of pokemon asynchronously:
-
-```js
-// src/PokemonList.js
-import { useStore } from 'statux';
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router';
-
-const url = 'https://pokeapi.co/api/v2/pokemon/1';
-
-export default () => {
-  const [pokemon, setPokemon] = useStore('pokemon');
-  useEffect(() => {
-    (async () => {
-      const { data } = await axios.get(url);
-      setPokemon(data);
-    })();
-  }, []);
-  if (!pokemon) return 'Loading...';
-  return (
-    <div>
-      <h2>Pokemon list:</h2>
-      <ul>
-        {pokemon.map(({ id, name }) => (
-          <li>
-            <Link to={`/${id}`}>{name}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-```
