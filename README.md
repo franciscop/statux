@@ -326,6 +326,30 @@ Help me write these? :)
 
 ### Todo list
 
+See [the demo]():
+
+```js
+// App.js
+export default () => (
+  <Store todo={[]}>
+    <TodoList />
+    <AddTodo/ >
+  </Store>
+);
+```
+
+```js
+// TodoList.js
+export default () => {
+  const list = useSelector('todo');
+  return (
+    <ul>
+      {list.map(item => <Item done={item.done}>{item.text}</Item>)}
+    </ul>
+  );
+};
+```
+
 ### Initial data loading
 
 ### Login and localStorage
