@@ -348,7 +348,7 @@ const BookForm = () => {
 
 ## Examples
 
-Help me write these? :)
+Some examples to show how *statux* works. Help me write these? And feel free to [suggest new ones](https://github.com/franciscop/statux/issues/new?template=suggest-example.md).
 
 ### Todo list
 
@@ -360,7 +360,6 @@ export default () => (
   <Store todo={[]}>
     <h1>TODO List:</h1>
     <TodoList />
-    <AddTodo />
   </Store>
 );
 ```
@@ -372,11 +371,10 @@ import React from "react";
 import forn from "forn";
 
 const Todo = ({ index }) => {
-  // destructuring of "[item, setItem]":
-  const [{ text, done }, { assign }] = useStore(`todo.${index}`);
+  const [item, setItem] = useStore(`todo.${index}`);
   return (
-    <li onClick={() => assign({ done: !done })}>
-      {done ? <strike>{text}</strike> : text}
+    <li onClick={() => setItem.assign({ done: !item.done })}>
+      {item.done ? <strike>{item.text}</strike> : item.text}
     </li>
   );
 };
