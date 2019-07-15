@@ -369,7 +369,9 @@ Some examples to show how *statux* works. Help me write these? And feel free to 
 
 ### Todo list
 
-A TODO list in 30 lines. See [the **working demo**](https://codesandbox.io/s/elegant-tdd-c8jlq):
+A TODO list in 30 lines (click image for the demo):
+
+[![TODO List](./assets/todo.png)](https://codesandbox.io/s/elegant-tdd-c8jlq)
 
 ```js
 // App.js
@@ -416,7 +418,9 @@ export default () => {
 
 ### Initial data loading
 
-See [pokemon loading list with graphics](https://codesandbox.io/s/elastic-glitter-crofz):
+See pokemon loading list with graphics (click image for the demo):
+
+[![Pokemon List](./assets/pokemon.png)](https://codesandbox.io/s/elastic-glitter-crofz)
 
 ```js
 // src/App.js
