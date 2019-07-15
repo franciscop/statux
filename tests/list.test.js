@@ -318,5 +318,14 @@ describe("List", () => {
       await $list.click();
       expect($list.html()).toBe(`<ul><li>2</li><li>1</li><li>0</li></ul>`);
     });
+
+    it(".remove() - remove an index by its index", async () => {
+      const items = ["a", "b", "c"];
+      const remove = (items, setItems) => setItems.remove(1);
+      const $list = $(<App items={items} onClick={remove} />);
+      expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
+      await $list.click();
+      expect($list.html()).toBe(`<ul><li>a</li><li>c</li></ul>`);
+    });
   });
 });

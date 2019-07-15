@@ -32,6 +32,16 @@ const freeze = obj => {
   return Object.freeze(obj);
 };
 
+const exclude = (obj, keys) => {
+  const newObj = {};
+  for (let key in obj) {
+    if (!keys.includes(key)) {
+      newObj[key] = obj[key];
+    }
+  }
+  return newObj;
+};
+
 // Helper - parse the multi-type passed value and put that into the update fn
 const resolve = (state, setState) => value => {
   while (typeof value === "function") {
@@ -70,20 +80,20 @@ const createActions = (state, setState) => {
     // Change the array in some immutable way. Helpers to make it easier
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Accessor_methods
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Iteration_methods
-    setter.concat = (...args) => setState(state.concat(...args));
-    setter.slice = (...args) => setState(state.slice(...args));
-    setter.filter = (...args) => setState(state.filter(...args));
-    setter.map = (...args) => setState(state.map(...args));
-    setter.reduce = (...args) => setState(state.reduce(...args));
-    setter.reduceRight = (...args) => setState(state.reduceRight(...args));
+    setter.concat = (...args) => setter(state.concat(...args));
+    setter.slice = (...args) => setter(state.slice(...args));
+    setter.filter = (...args) => setter(state.filter(...args));
+    setter.map = (...args) => setter(state.map(...args));
+    setter.reduce = (...args) => setter(state.reduce(...args));
+    setter.reduceRight = (...args) => setter(state.reduceRight(...args));
 
     // Aliases
     setter.append = setter.push;
     setter.prepend = setter.unshift;
-  }
-
-  if (typeof state === "object") {
-    setter.assign = (...args) => setState(Object.assign({}, state, ...args));
+    setter.remove = index => setter.splice(Number(index), 1);
+  } else if (typeof state === "object") {
+    setter.assign = (...args) => setter(Object.assign({}, state, ...args));
+    setter.remove = (...args) => setter(exclude(state, args));
 
     // Aliases
     setter.extend = setter.assign;

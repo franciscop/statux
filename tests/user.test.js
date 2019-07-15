@@ -57,13 +57,25 @@ describe("User", () => {
     expect(user).toEqual({ id: 1 }); // No mutation check
   });
 
-  it("can assign the name", async () => {
-    const user = { id: 1 };
-    const onClick = (user, setUser) => setUser.assign({ name: "John" });
-    const $user = $(<App user={user} onClick={onClick} />);
-    expect($user.html()).toEqual(`<div>{"id":1}</div>`);
-    await $user.click();
-    expect($user.html()).toEqual(`<div>{"id":1,"name":"John"}</div>`);
-    expect(user).toEqual({ id: 1 }); // No mutation check
+  describe("objects", () => {
+    it("can assign the name", async () => {
+      const user = { id: 1 };
+      const onClick = (user, setUser) => setUser.assign({ name: "John" });
+      const $user = $(<App user={user} onClick={onClick} />);
+      expect($user.html()).toEqual(`<div>{"id":1}</div>`);
+      await $user.click();
+      expect($user.html()).toEqual(`<div>{"id":1,"name":"John"}</div>`);
+      expect(user).toEqual({ id: 1 }); // No mutation check
+    });
+
+    it("can remove the name", async () => {
+      const user = { id: 1, name: "Martha" };
+      const onClick = (user, setUser) => setUser.remove("name");
+      const $user = $(<App user={user} onClick={onClick} />);
+      expect($user.html()).toEqual(`<div>{"id":1,"name":"Martha"}</div>`);
+      await $user.click();
+      expect($user.html()).toEqual(`<div>{"id":1}</div>`);
+      expect(user).toEqual({ id: 1, name: "Martha" }); // No mutation check
+    });
   });
 });

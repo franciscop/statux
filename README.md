@@ -293,41 +293,58 @@ const ChangeName = () => {
 };
 ```
 
-It also returns helpers for immutable state as properties:
+There are several helper methods. These are based on/inspired by the array and object prototype linked in their names:
+
+- [`fill()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill) (_array_): replace all items by the specified one.
+- [`pop()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop) (_array_): remove the last item.
+- [`push()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push) (_array_): append an item to the end.
+- [`reverse()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse) (_array_): invert the order of the items.
+- [`shift()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift) (_array_): remove the first item.
+- [`sort()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) (_array_): change the item order according to the passed function.
+- [`splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) (_array_): modify the items in varied ways.
+- [`unshift()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift) (_array_): prepend an item to the beginning.
+- [`append()`]() (_array_): add an item to the end (alias of `push()`).
+- [`prepend()`]() (_array_): add an item to the beginning (alias of `unshift()`).
+- [`remove()`]() (_array_): remove an item by its index.
+- [`assign()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) (_object_): add new properties as specified in the argument.
+- `remove()` (_object_): remove the specified property.
+- `extend()` (_object_): add new properties as specified in the passed object (alias of `assign()`).
+
+See them in action
 
 ```js
-// For Arrays: books = ['a', 'b', 'c']
-const { fill, pop, push, ...actions } = useActions('books');
+// For the state of: books = ['a', 'b', 'c']
+const { fill, pop, push, ...setBooks } = useActions('books');
 
-// Array methods made immutable
-const onClick = e => fill(1);  // [1, 1, 1]
-const onClick = e => pop(); // ['a', 'b']
-const onClick = e => push('d'); // ['a', 'b', 'c', 'd']
-const onClick = e => actions.reverse(); // ['c', 'b', 'a']
-const onClick = e => actions.shift(); // ['b', 'c']
-const onClick = e => actions.sort(); // ['a', 'b', 'c']
-const onClick = e => actions.splice(1, 1, 'x'); // ['a', 'x', 'c']
-const onClick = e => actions.unshift('x'); // ['x', 'a', 'b', 'c']
+fill(1);  // [1, 1, 1]
+pop(); // ['a', 'b']
+push('d'); // ['a', 'b', 'c', 'd']
+setBooks.reverse(); // ['c', 'b', 'a']
+setBooks.shift(); // ['b', 'c']
+setBooks.sort(); // ['a', 'b', 'c']
+setBooks.splice(1, 1, 'x'); // ['a', 'x', 'c']
+setBooks.unshift('x'); // ['x', 'a', 'b', 'c']
 
 // Aliases
-const onClick = e => actions.append('x');  // ['a', 'b', 'c', 'x']
-const onClick = e => actions.prepend('x');  // ['x', 'a', 'b', 'c']
-```
+setBooks.append('x');  // ['a', 'b', 'c', 'x']
+setBooks.prepend('x');  // ['x', 'a', 'b', 'c']
+setBooks.remove(1);  // ['a', 'c']
 
-These do not mutate; but the helper is still convenient:
+// These are immutable, but this still helps:
+setBooks.concat('d', 'e');  // ['a', 'b', 'c', 'd', 'e']
+setBooks.slice(1, 1);  // ['b']
+setBooks.filter(item => /^(a|b)$/.test(item)); // ['a', 'b']
+setBooks.map(book => book + '!'); // ['a!', 'b!', 'c!']
+setBooks.reduce((all, book) => [...all, book + 'x'], []); // ['ax', 'bx', 'cx']
+setBooks.reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
 
-```js
-// books = ['a', 'b', 'c']
-const setBooks = useActions('books');
-const onClick => setBooks(books => books.concat('d'));  // ['a', 'b', 'c', 'd']
+// For the state of: user = { id: 1, name: 'John' }
+const setUser = useActions('user');
+setUser(user => ({ ...user, name: 'Sarah' });   // { id: 1, name: 'Sarah' }
 
-const { concat, slice, filter, map, reduce, reduceRight } = useActions('books');
-const onClick => concat('d', 'e');  // ['a', 'b', 'c', 'd', 'e']
-const onClick => slice(1, 1);  // ['b']
-const onClick => filter(item => /^(a|b)$/.test(item)); // ['a', 'b']
-const onClick => map(book => book + '!'); // ['a!', 'b!', 'c!']
-const onClick => reduce((all, book) => [...all, book + 'x'], []); // ['ax', 'bx', 'cx']
-const onClick => reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
+setUser.assign({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
+setUser.extend({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
+setUser.remove('name');  // { id: 1 }
 ```
 
 These methods can be extracted right in the actions or used as a method:
@@ -398,6 +415,54 @@ export default () => {
 ```
 
 ### Initial data loading
+
+See [pokemon loading list with graphics](https://codesandbox.io/s/elastic-glitter-crofz):
+
+```js
+// src/App.js
+import Store from 'statux';
+import React from 'react';
+import PokemonList from './PokemonList';
+
+export default () => (
+  <Store pokemon={[]}>
+    <h1>The Best 151:</h1>
+    <PokemonList />
+  </Store>
+);
+```
+
+```js
+// src/PokemonList.js
+import { useStore } from "statux";
+import React, { useEffect } from "react";
+import styled from "styled-components";
+
+const url = "https://pokeapi.co/api/v2/pokemon/?limit=151";
+const catchAll = () =>
+  fetch(url)
+    .then(r => r.json())
+    .then(r => r.results);
+
+const Pokemon = ({ id, children }) => <li id={id}>{children}</li>;
+
+export default () => {
+  const [pokemon, setPokemon] = useStore("pokemon");
+  useEffect(() => {
+    catchAll().then(setPokemon);
+  }, []);
+  if (!pokemon.length) return "Loading...";
+  return (
+    <ul>
+      {pokemon.map((poke, i) => (
+        <li key={i} id={i + 1}>
+          <Label>{poke.name}</Label>
+        </li>
+      ))}
+    </ul>
+  );
+};
+```
 
 ### Login and localStorage
 
