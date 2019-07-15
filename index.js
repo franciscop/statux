@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 
 const Context = createContext([{}, null]);
 const { Provider, Consumer } = Context;
@@ -112,11 +112,11 @@ export const useSelector = (sel = state => state) => {
 
 export const useActions = key => {
   const [state, setState] = useContext(Context);
-  if (!key) return createActions(state, setState);
+  if (!key) return useCallback(createActions(state, setState), [state]);
 
   const subState = dotGet(state, key);
   const subSetter = value => setState(dotSet(state, key, value));
-  return createActions(subState, subSetter);
+  return useCallback(createActions(subState, subSetter), [subState]);
 };
 
 export const useStore = name => [useSelector(name), useActions(name)];
