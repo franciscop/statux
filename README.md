@@ -470,6 +470,38 @@ export default () => {
 
 ### Login and localStorage
 
+You can read/write to localStorage like this:
+
+```js
+import Store, { useSelector } from 'statux';
+
+// Initial auth token load
+const auth = localStorage.getItem('auth');
+
+// Save/remove the auth token when it changes anywhere in the app
+const TokenUpdate = () => {
+  const auth = useSelector('auth');
+  useEffect(() => {
+    localStorage.setItem('auth', auth);
+  }, [auth]);
+  return null;
+};
+
+export default () => (
+  <Store auth={auth}>
+    <TokenUpdate />
+    ...
+  </Store>
+)
+```
+
+Then when updating the token:
+
+```js
+
+```
+
+
 ### API calls
 
 ### Reset initial state
