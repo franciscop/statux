@@ -1,22 +1,16 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-A straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html) and [frozen state](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze):
+A straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html) and [immutable state](#truly-immutable):
 
 ```js
-import Store, { useStore, useSelector, useActions } from 'statux';
+import Store, { useStore } from 'statux';
 
 <Store user={false} books={[]}>...</Store>
 
-const [state, setState] = useStore();
-const [user, setUser] = useStore('user');
-
-const state = useSelector();
-const books = useSelector('books');
-const books = useSelector(state => state.books);
-
-const setState = useActions();
-const setBooks = useActions('books');
-const { append, prepend, ...actions } = useActions('books');
+export default () =>  {
+  const [user, setUser] = useStore('user');
+  ...
+};
 ```
 
 Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions),  [*examples*](#examples).
@@ -70,13 +64,12 @@ export default () => {
 
 ## Why?
 
-There are few reasons why I created this instead of using `useState()` or `redux`:
+Statux fits somewhere between React's local state and a fully fledged redux store. It's perfect for productive indie devs and small sized teams and projects:
 
-- **Direct manipulation**: change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). The catch? refactoring a large codebase is more expensive since your actions are coupled to the state.
-- **Frozen solid**: `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs benefit from this avoiding common bugs.
+- [**Frozen solid**](#truly-immutable): `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs avoid common and subtle mutation  bugs.
+- **Direct manipulation**: change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). Refactoring your codebase becomes more expensive though.
 - **Semantic React**: with [*react hooks*](https://reactjs.org/docs/hooks-overview.html) and [*statux actions*](#useactions), creating components and modifying state feel right at home.
 
-Statux fits somewhere between React's local state and a fully fledged redux store. It's perfect for indie devs and small sized teams and projects.
 
 
 
@@ -310,7 +303,7 @@ There are several helper methods. These are based on/inspired by the array and o
 - `remove()` (_object_): remove the specified property.
 - `extend()` (_object_): add new properties as specified in the passed object (alias of `assign()`).
 
-See them in action
+See them in action:
 
 ```js
 // For the state of: books = ['a', 'b', 'c']
@@ -468,9 +461,31 @@ export default () => {
 };
 ```
 
+
+### API calls
+
+When calling an API, make sure you are using React's `useEffect()`:
+
+```js
+// Login.js
+export default () => {
+  const [auth, setAuth] = useStore('auth');
+  const onSubmit = useCallback(async data => {
+    const token = await api.login(data);
+    setAuth(token);
+  }, [auth]);
+  return (
+    <LoginForm onSubmit={onSubmit}>
+      {...}
+    </LoginForm>
+  );
+}
+```
+
+
 ### Login and localStorage
 
-You can read/write to localStorage like this:
+Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically:
 
 ```js
 import Store, { useSelector } from 'statux';
@@ -495,13 +510,60 @@ export default () => (
 )
 ```
 
-Then when updating the token:
 
-```js
-
-```
-
-
-### API calls
 
 ### Reset initial state
+
+
+## Motivation
+
+### Truly immutable
+
+The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
+
+```js
+const App = () => {
+  const [user] = useStore("user");
+  // TypeError - can't define property "name"; Object is not extensible
+  user.name = 'John';
+  return <div>{user.name}</div>;
+};
+```
+
+This will avoid whole categories of bugs. Did you know these for instance?
+
+- `arr.sort((a, b) => {...}).map()` is also mutating the original array.
+- `setValue(value++)` will mutate the original value.
+
+It will throw a TypeError since you cannot mutate the state directly. Instead, try defining a new variable if you indeed want to read it with a default:
+
+```js
+const App = () => {
+  const [user] = useStore("user");
+  const name = user.name || 'John';
+  return <div>{name}</div>;
+};
+```
+
+Or directly access the name with the correct selector and a default:
+
+```js
+const App = () => {
+  const [name = 'John'] = useStore("user.name");
+  return <div>{name}</div>;
+};
+```
+
+When you want to change the state, you can do it without mutations or use one of the helpers we provide:
+
+```js
+// Set the name of the user
+const onClick = name => setUser({ ...user, name });
+const onClick = name => setUser(user => ({ ...user, name }));
+const onClick = name => setUser.assign({ name });
+
+// Add a book to the list
+const onSubmit = book => setBooks([...books, book]);
+const onSubmit = book => setBooks(books => [...books, book]);
+const onSubmit = book => setBooks.append(book);
+```
