@@ -95,6 +95,29 @@ describe("List", () => {
     expect($list.html()).toBe(`<ul><li>1-x</li><li>2-b</li></ul>`);
   });
 
+  it("can retrieve a newly added item", async () => {
+    const all = [];
+    // We define and test a items:
+    const List = () => {
+      const [items, setItems] = useStore("items");
+      const [item, setItem] = useStore(`items.${items.length - 1}`);
+      all.push(item);
+      // console.log("Sel:", items.length - 1, "Item:", item, items);
+      const onClick = e => setItems.append("i" + items.length);
+      return <DisplayList items={items} onClick={onClick} />;
+    };
+    const items = ["i0"];
+    const $list = $(<Store items={items} children={<List />} />);
+    expect($list.html()).toBe(`<ul><li>i0</li></ul>`);
+    await $list.click();
+    await $list.click();
+    await $list.click();
+    expect(all).toEqual(["i0", "i1", "i2", "i3"]);
+    expect($list.html()).toBe(
+      `<ul><li>i0</li><li>i1</li><li>i2</li><li>i3</li></ul>`
+    );
+  });
+
   describe("array", () => {
     // List from MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype
     it(".fill() - all the items", async () => {
