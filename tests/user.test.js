@@ -77,5 +77,38 @@ describe("User", () => {
       expect($user.html()).toEqual(`<div>{"id":1}</div>`);
       expect(user).toEqual({ id: 1, name: "Martha" }); // No mutation check
     });
+
+    it("should only trigger that prop listener", async () => {
+      let i = 0;
+      const SetName = ({ children }) => {
+        const [name, setName] = useStore("user.name");
+        return <div onClick={e => setName("test")}>{children}</div>;
+      };
+      const UserName = ({ onClick = () => {}, onMount = () => {} }) => {
+        const name = useSelector("user.name");
+        return name;
+      };
+      const UserAge = ({ onClick = () => {}, onMount = () => {} }) => {
+        const age = useSelector("user.age");
+        i++;
+        return `${age} - ${i}`;
+      };
+
+      const user = { id: 1, age: 10, name: "Francisco" };
+      const onClick = (user, setUser) => setUser({ ...user, name: "John" });
+      const $user = $(
+        <App user={user} onClick={onClick}>
+          <SetName>
+            <UserName /> - <UserAge />
+          </SetName>
+        </App>
+      );
+      expect($user.html()).toEqual(`<div>Francisco - 10 - 1</div>`);
+      await delay(100);
+      await $user.click();
+      await delay(100);
+      expect($user.html()).toEqual(`<div>test - 10 - 1</div>`);
+      expect(user).toEqual({ id: 1, age: 10, name: "Francisco" }); // No mutation check
+    });
   });
 });

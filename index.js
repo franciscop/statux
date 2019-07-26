@@ -1,10 +1,22 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef
+} from "react";
 
-const Context = createContext([{}, null]);
+// https://github.com/facebook/react/issues/14110#issuecomment-446845886
+const Context = createContext([{}, []]);
+
 const { Provider, Consumer } = Context;
 
 // Helpers to get and set using the dot notation selector
-const dotGet = (obj, sel) => sel.split(".").reduce((obj, i) => obj[i], obj);
+const dotGet = (obj, sel) => {
+  if (typeof sel === "function") return sel(obj);
+  return sel.split(".").reduce((obj, i) => obj[i], obj);
+};
 const dotSet = (obj, sel, value) => {
   const [key, ...rest] = sel.split(".");
   const subSel = rest.join(".");
@@ -106,22 +118,52 @@ const createActions = (state, setState) => {
 };
 
 export const useSelector = (sel = state => state) => {
-  const [state] = useContext(Context);
-  return freeze(typeof sel === "string" ? dotGet(state, sel) : sel(state));
+  const [state, setState, subscribe] = useContext(Context);
+  const init = dotGet(state.current, sel);
+  const [local, setLocal] = useState(init);
+
+  const ref = useRef(null);
+  if (!ref.current) {
+    ref.current = subscribe(newState => {
+      const stateFragment = dotGet(newState, sel);
+      if (stateFragment === local) return;
+      state.current = newState;
+      setLocal(stateFragment);
+    });
+  }
+  useEffect(() => {
+    const unsub = ref.current;
+    ref.current = null;
+    return unsub;
+  }, []);
+
+  return freeze(local);
 };
 
 export const useActions = key => {
   const [state, setState] = useContext(Context);
-  if (!key) return useCallback(createActions(state, setState), [state]);
+  if (!key) {
+    return useCallback(createActions(state.current, setState), [state.current]);
+  }
 
-  const subState = dotGet(state, key);
-  const subSetter = value => setState(dotSet(state, key, value));
+  const subState = dotGet(state.current, key);
+  const subSetter = value => setState(dotSet(state.current, key, value));
   return useCallback(createActions(subState, subSetter), [subState]);
 };
 
 export const useStore = name => [useSelector(name), useActions(name)];
 
 export default ({ children, ...initial }) => {
-  const [state, setState] = useState(initial);
-  return <Provider value={[state, setState]}>{children}</Provider>;
+  const state = useRef(initial);
+  const subs = [];
+  const subscribe = fn => {
+    subs.push(fn);
+    return () => subs.splice(subs.findIndex(item => item === fn), 1);
+  };
+  const setState = newState => {
+    subs.forEach(sub => {
+      sub(newState);
+    });
+  };
+  return <Provider value={[state, setState, subscribe]}>{children}</Provider>;
 };
