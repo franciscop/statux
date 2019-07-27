@@ -142,13 +142,15 @@ export const useSelector = (sel = state => state) => {
   return freeze(dotGet(state.current, selRef.current));
 };
 
-export const useActions = key => {
+export const useActions = sel => {
+  // Reset the actions when there's a change in the state
+  useSelector(sel);
   const { state, setState } = useContext(Context);
   let callback;
   let dependencies;
-  if (key) {
-    const subState = dotGet(state.current, key);
-    const subSetter = value => setState(dotSet(state.current, key, value));
+  if (sel) {
+    const subState = dotGet(state.current, sel);
+    const subSetter = value => setState(dotSet(state.current, sel, value));
     callback = createActions(subState, subSetter);
     dependencies = [subState];
   } else {

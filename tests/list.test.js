@@ -1,4 +1,4 @@
-import Store, { useStore, useSelector } from "../index.js";
+import Store, { useActions, useStore, useSelector } from "../index.js";
 
 import "babel-polyfill";
 import React, { useEffect } from "react";
@@ -93,6 +93,42 @@ describe("List", () => {
     expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li></ul>`);
     await $list.click();
     expect($list.html()).toBe(`<ul><li>1-x</li><li>2-b</li></ul>`);
+  });
+
+  it("actions have updated items", async () => {
+    const ItemList = ({ onClick }) => {
+      const items = useSelector("items");
+      return (
+        <DisplayList
+          items={items.map(it => `${it.id}-${it.text}`)}
+          onClick={onClick}
+        />
+      );
+    };
+
+    // We define and test a items:
+    const all = [];
+    const List = () => {
+      const setItems = useActions("items");
+      const onClick = e => {
+        setItems(items => {
+          all.push(items);
+          return [...items, { id: items.length + 1, text: "b" }];
+        });
+      };
+      return <ItemList onClick={onClick} />;
+    };
+    const items = [{ id: 1, text: "a" }];
+    const $list = $(<Store items={items} children={<List />} />);
+    expect($list.html()).toBe(`<ul><li>1-a</li></ul>`);
+    await $list.click();
+    expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li></ul>`);
+    await $list.click();
+    expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li><li>3-b</li></ul>`);
+    expect(all).toEqual([
+      [{ id: 1, text: "a" }],
+      [{ id: 1, text: "a" }, { id: 2, text: "b" }]
+    ]);
   });
 
   it("can retrieve a newly added item", async () => {
