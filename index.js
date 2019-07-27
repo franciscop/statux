@@ -116,35 +116,42 @@ const createActions = (state, setState) => {
   return setter;
 };
 
-export const useSelector = (sel = state => state) => {
+// Rerender whatever is listening when there's a change in the state fragment
+// derived from the selector, which might happen because of a state change or
+// because of a selector change
+const useSubscription = (sel = state => state) => {
   const { state, subscribe } = useContext(Context);
   const init = dotGet(state.current, sel);
   const [local, setLocal] = useState(init);
 
   const selRef = useRef(sel);
   const subRef = useRef(null);
-  // console.log("Selectors:", selRef.current, "->", sel);
+
+  // New selector, reset it, unsubscribe from the old one and leave it empty
+  // for the next subscription
   if (selRef.current !== sel) {
     selRef.current = sel;
+    if (subRef.current) subRef.current();
     subRef.current = null;
-    return freeze(dotGet(state.current, selRef.current));
   }
+
   if (!subRef.current) {
     subRef.current = subscribe(newState => {
-      // console.log("Subscription:", selRef.current, newState);
       const stateFragment = dotGet(newState, selRef.current);
-      // console.log("State:", local, "->", stateFragment);
       if (stateFragment === local) return;
       setLocal(stateFragment);
     });
   }
+};
 
-  return freeze(dotGet(state.current, selRef.current));
+export const useSelector = (sel = state => state) => {
+  useSubscription(sel);
+  const { state } = useContext(Context);
+  return freeze(dotGet(state.current, sel));
 };
 
 export const useActions = sel => {
-  // Reset the actions when there's a change in the state
-  useSelector(sel);
+  useSubscription(sel);
   const { state, setState } = useContext(Context);
   let callback;
   let dependencies;
@@ -167,11 +174,10 @@ export default ({ children, ...initial }) => {
   const subs = [];
   const subscribe = fn => {
     subs.push(fn);
-    fn(state.current);
+    // Unsubscribe in the callback
     return () => subs.splice(subs.findIndex(item => item === fn), 1);
   };
   const setState = newState => {
-    // console.log("Setting state", newState);
     state.current = newState;
     subs.forEach(sub => sub(newState));
   };
