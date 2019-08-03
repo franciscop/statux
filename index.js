@@ -138,8 +138,8 @@ const useSubscription = (sel = state => state) => {
   if (!subRef.current) {
     subRef.current = subscribe(old => {
       const oldFragment = dotGet(old, selRef.current);
-      const globFragment = dotGet(state.current, selRef.current);
-      if (oldFragment === globFragment) return;
+      const newFragment = dotGet(state.current, selRef.current);
+      if (oldFragment === newFragment) return;
       update({});
     });
   }
