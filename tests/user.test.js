@@ -111,4 +111,34 @@ describe("User", () => {
       expect(user).toEqual({ id: 1, age: 10, name: "Francisco" }); // No mutation check
     });
   });
+
+  it("correctly diffs the state", async () => {
+    let i = 0;
+    const SetName = ({ children }) => {
+      i++;
+      const [name, setName] = useStore("user.name");
+      const toggle = () => setName(name === "test" ? "Francisco" : "test");
+      return (
+        <div onClick={toggle}>
+          {name} - {i}
+        </div>
+      );
+    };
+
+    const user = { name: "Francisco" };
+    const $user = $(
+      <App user={user}>
+        <SetName />
+      </App>
+    );
+    expect($user.html()).toEqual(`<div>Francisco - 1</div>`);
+    await delay(100);
+    await $user.click();
+    await delay(100);
+    expect($user.html()).toEqual(`<div>test - 2</div>`);
+    await delay(100);
+    await $user.click();
+    await delay(100);
+    expect($user.html()).toEqual(`<div>Francisco - 3</div>`);
+  });
 });

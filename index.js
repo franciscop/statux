@@ -122,7 +122,7 @@ const createActions = (state, setState) => {
 const useSubscription = (sel = state => state) => {
   const { state, subscribe } = useContext(Context);
   const init = dotGet(state.current, sel);
-  const [local, setLocal] = useState(init);
+  const [_, update] = useState({});
 
   const selRef = useRef(sel);
   const subRef = useRef(null);
@@ -136,10 +136,11 @@ const useSubscription = (sel = state => state) => {
   }
 
   if (!subRef.current) {
-    subRef.current = subscribe(newState => {
-      const stateFragment = dotGet(newState, selRef.current);
-      if (stateFragment === local) return;
-      setLocal(stateFragment);
+    subRef.current = subscribe(old => {
+      const oldFragment = dotGet(old, selRef.current);
+      const globFragment = dotGet(state.current, selRef.current);
+      if (oldFragment === globFragment) return;
+      update({});
     });
   }
 };
@@ -178,8 +179,9 @@ export default ({ children, ...initial }) => {
     return () => subs.splice(subs.findIndex(item => item === fn), 1);
   };
   const setState = newState => {
+    const old = state.current;
     state.current = newState;
-    subs.forEach(sub => sub(newState));
+    subs.forEach(sub => sub(old));
   };
   return <Provider value={{ state, setState, subscribe }}>{children}</Provider>;
 };

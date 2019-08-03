@@ -517,6 +517,8 @@ export default () => (
 
 ## Motivation
 
+Why did I create this instead of using useState+useContext() or Redux? There are few reasons that you might care about:
+
 ### Truly immutable
 
 The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
