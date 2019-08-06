@@ -2,16 +2,9 @@
 
 A straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html) and [immutable state](#truly-immutable):
 
-```js
-import Store, { useStore } from 'statux';
 
-<Store user={false} books={[]}>...</Store>
 
-export default () =>  {
-  const [user, setUser] = useStore('user');
-  ...
-};
-```
+<img width="48%" align="right" src="https://user-images.githubusercontent.com/2801252/62548095-8e97d180-b866-11e9-8fef-bec7d8c0faaf.png" /><img width="48%" float="left" src="https://user-images.githubusercontent.com/2801252/62547754-03b6d700-b866-11e9-889b-17441bee108e.png" />
 
 Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions),  [*examples*](#examples).
 
@@ -59,17 +52,6 @@ export default () => {
   )
 };
 ```
-
-
-
-## Why?
-
-Statux fits somewhere between React's local state and a fully fledged redux store. It's perfect for productive indie devs and small sized teams and projects:
-
-- [**Frozen solid**](#truly-immutable): `Object.freeze()` is used internally, so you _cannot_ accidentally mutate the state. Beginners and experienced devs avoid common and subtle mutation  bugs.
-- **Direct manipulation**: change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). Refactoring your codebase becomes more expensive though.
-- **Semantic React**: with [*react hooks*](https://reactjs.org/docs/hooks-overview.html) and [*statux actions*](#useactions), creating components and modifying state feel right at home.
-
 
 
 
@@ -515,6 +497,8 @@ export default () => (
 ### Reset initial state
 
 
+
+
 ## Motivation
 
 Why did I create this instead of using useState+useContext() or Redux? There are few reasons that you might care about:
@@ -569,3 +553,8 @@ const onSubmit = book => setBooks([...books, book]);
 const onSubmit = book => setBooks(books => [...books, book]);
 const onSubmit = book => setBooks.append(book);
 ```
+
+
+### Direct manipulation
+
+Change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). Refactoring your codebase becomes more expensive though, and this is **not** following the Flux arquitecture.
