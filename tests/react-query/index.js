@@ -32,12 +32,36 @@ const toJson = (json, options) => {
   return json;
 };
 
+const dotGet = (obj, sel = "") => {
+  if (typeof sel === "function") return sel(obj);
+  return sel.split(".").reduce((obj, i) => obj[i], obj);
+};
+
 $.prototype.json = function(options = {}) {
   return toJson(this.inst.toJSON(), options);
 };
 
-$.prototype.click = function() {
-  return act(async () => this.inst.toJSON().props.onClick());
+$.prototype.bubble = function(selector) {
+  const json = this.inst.toJSON();
+
+  const getChild = (_, i, all) => {
+    const childSelector = all.slice(0, all.length - i).join(".");
+    return dotGet(json, childSelector);
+  };
+
+  // The root one is also a target
+  return [...selector.split(".").map(getChild), json].filter(Boolean);
+};
+
+$.prototype.click = function(selector = "") {
+  return act(async () => {
+    for (let target of this.bubble(selector)) {
+      if (!target.props) continue;
+      if (!target.props.onClick) continue;
+      await target.props.onClick({});
+    }
+    return;
+  });
 };
 
 export default $;
