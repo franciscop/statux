@@ -37,7 +37,7 @@ export default () => (
 Finally, use and update these values wherever you want:
 
 ```js
-// src/pages/User.js
+// src/User.js
 import React from 'react';
 import { useStore } from 'statux';
 
