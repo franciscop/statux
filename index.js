@@ -13,10 +13,12 @@ const { Provider } = Context;
 
 // Helpers to get and set using the dot notation selector
 const dotGet = (obj, sel) => {
+  if (!sel) return obj;
   if (typeof sel === "function") return sel(obj);
   return sel.split(".").reduce((obj, i) => obj[i], obj);
 };
 const dotSet = (obj, sel, value) => {
+  if (!sel) return value;
   const [key, ...rest] = sel.split(".");
   const subSel = rest.join(".");
   const subValue = subSel ? dotSet(obj[key], subSel, value) : value;
@@ -53,50 +55,49 @@ const exclude = (obj, keys) => {
   return newObj;
 };
 
-// Helper - parse the multi-type passed value and put that into the update fn
-const resolve = (state, setState) => value => {
-  while (typeof value === "function") {
-    value = value(freeze(state));
-  }
-  return value && value.then ? value.then(setState) : setState(value);
-};
+// TODO: test all of these methods to ensure there's no stale state in any
+const createActions = (stateRef, sel, setState) => {
+  const state = dotGet(stateRef.current, sel);
 
-// Create a swallow clone of the array so that it can be mutated in place
-const applyMutation = (state, setState) => mutation => {
-  return (...args) => {
-    const cloned = state.slice();
-    mutation(cloned, ...args);
-    setState(cloned);
+  // Generic one `setUser('Francisco')` - parses the multi-type value
+  const setter = value => {
+    const state = dotGet(stateRef.current, sel);
+    while (typeof value === "function") {
+      value = value(freeze(state));
+    }
+    return value && value.then ? value.then(setState) : setState(value);
   };
-};
-
-const createActions = (state, setState) => {
-  // Generic one `setUser('Francisco')`
-  const setter = resolve(state, setState);
 
   if (Array.isArray(state)) {
-    const mutate = applyMutation(state, setState); // <- INTERNAL USE ONLY
+    // Create a swallow clone of the array so that it can be mutated in place
+    const mutate = mutation => {
+      setter(prev => {
+        const cloned = prev.slice();
+        mutation(cloned);
+        return cloned;
+      });
+    };
 
     // Mutation methods
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Mutator_methods
-    setter.fill = mutate((items, ...args) => items.fill(...args));
-    setter.pop = mutate((items, ...args) => items.pop(...args));
-    setter.push = mutate((items, ...args) => items.push(...args));
-    setter.reverse = mutate((items, ...args) => items.reverse(...args));
-    setter.shift = mutate((items, ...args) => items.shift(...args));
-    setter.sort = mutate((items, ...args) => items.sort(...args));
-    setter.splice = mutate((items, ...args) => items.splice(...args));
-    setter.unshift = mutate((items, ...args) => items.unshift(...args));
+    setter.fill = (...args) => mutate(prev => prev.fill(...args));
+    setter.pop = (...args) => mutate(prev => prev.pop(...args));
+    setter.push = (...args) => mutate(prev => prev.push(...args));
+    setter.reverse = (...args) => mutate(prev => prev.reverse(...args));
+    setter.shift = (...args) => mutate(prev => prev.shift(...args));
+    setter.sort = (...args) => mutate(prev => prev.sort(...args));
+    setter.splice = (...args) => mutate(prev => prev.splice(...args));
+    setter.unshift = (...args) => mutate(prev => prev.unshift(...args));
 
     // Change the array in some immutable way. Helpers to make it easier
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Accessor_methods
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Iteration_methods
-    setter.concat = (...args) => setter(state.concat(...args));
-    setter.slice = (...args) => setter(state.slice(...args));
-    setter.filter = (...args) => setter(state.filter(...args));
-    setter.map = (...args) => setter(state.map(...args));
-    setter.reduce = (...args) => setter(state.reduce(...args));
-    setter.reduceRight = (...args) => setter(state.reduceRight(...args));
+    setter.concat = (...args) => setter(prev => prev.concat(...args));
+    setter.slice = (...args) => setter(prev => prev.slice(...args));
+    setter.filter = (...args) => setter(prev => prev.filter(...args));
+    setter.map = (...args) => setter(prev => prev.map(...args));
+    setter.reduce = (...args) => setter(prev => prev.reduce(...args));
+    setter.reduceRight = (...args) => setter(prev => prev.reduceRight(...args));
 
     // Aliases
     setter.append = setter.push;
@@ -111,7 +112,7 @@ const createActions = (state, setState) => {
   }
 
   // Numbers
-  setter.add = resolve(state, num => setState(state + num));
+  setter.add = num => setter(prev => prev + num);
 
   return setter;
 };
@@ -130,6 +131,7 @@ const useSubscription = (sel = state => state) => {
   // New selector, reset it, unsubscribe from the old one and leave it empty
   // for the next subscription
   if (selRef.current !== sel) {
+    // console.log("RESET", selRef.current, sel);
     selRef.current = sel;
     if (subRef.current) subRef.current();
     subRef.current = null;
@@ -137,9 +139,12 @@ const useSubscription = (sel = state => state) => {
 
   if (!subRef.current) {
     subRef.current = subscribe(old => {
+      // console.log("Subscription", selRef.current, sel, old, state);
       const oldFragment = dotGet(old, selRef.current);
       const newFragment = dotGet(state.current, selRef.current);
       if (oldFragment === newFragment) return;
+      // console.log("CHANGED:", oldFragment, newFragment);
+      // console.log("Current:", state.current);
       update({});
     });
   }
@@ -154,18 +159,11 @@ export const useSelector = (sel = state => state) => {
 export const useActions = sel => {
   useSubscription(sel);
   const { state, setState } = useContext(Context);
-  let callback;
-  let dependencies;
-  if (sel) {
-    const subState = dotGet(state.current, sel);
-    const subSetter = value => setState(dotSet(state.current, sel, value));
-    callback = createActions(subState, subSetter);
-    dependencies = [subState];
-  } else {
-    callback = createActions(state.current, setState);
-    dependencies = [state.current];
-  }
-  return useCallback(callback, dependencies);
+  // console.log("useActions", sel, state);
+  const callback = createActions(state, sel, value => {
+    setState(dotSet(state.current, sel, value));
+  });
+  return useCallback(callback, [sel]);
 };
 
 export const useStore = name => [useSelector(name), useActions(name)];
@@ -180,8 +178,10 @@ export default ({ children, ...initial }) => {
   };
   const setState = newState => {
     const old = state.current;
+    // console.log("BEGIN", old, newState);
     state.current = newState;
     subs.forEach(sub => sub(old));
+    // console.log("DONE", old, newState);
   };
   return <Provider value={{ state, setState, subscribe }}>{children}</Provider>;
 };

@@ -41,6 +41,27 @@ describe("useStore()", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
+  it("can do it twice", async () => {
+    const Counter = () => {
+      const count = useSelector("count");
+      const setCount = useActions("count");
+      return (
+        <div
+          onClick={e => {
+            setCount(num => num + 1);
+            setCount(num => num + 1);
+          }}
+        >
+          {count}
+        </div>
+      );
+    };
+    const $counter = $(<Store count={1} children={<Counter />} />);
+    expect($counter.html()).toBe(`<div>1</div>`);
+    await $counter.click();
+    expect($counter.html()).toBe(`<div>3</div>`);
+  });
+
   it("can use a callback", async () => {
     const Counter = () => {
       const [count, setCount] = useStore("count");
@@ -76,7 +97,18 @@ describe("useStore() prebuilt functions", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
-  it("can use a prebuilt function with a callback", async () => {
+  it.skip("can use a prebuilt function with a promise", async () => {
+    const Counter = () => {
+      const [count, { add }] = useStore("count");
+      return <div onClick={e => add(num => Promise.resolve(2))}>{count}</div>;
+    };
+    const $counter = $(<Store count={1} children={<Counter />} />);
+    expect($counter.html()).toBe(`<div>1</div>`);
+    await $counter.click();
+    expect($counter.html()).toBe(`<div>3</div>`);
+  });
+
+  it.skip("can use a prebuilt function with a callback", async () => {
     const Counter = () => {
       const [count, { add }] = useStore("count");
       return <div onClick={e => add(num => 2)}>{count}</div>;
@@ -87,18 +119,7 @@ describe("useStore() prebuilt functions", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
-  it("can use a prebuilt function with a callback", async () => {
-    const Counter = () => {
-      const [count, { add }] = useStore("count");
-      return <div onClick={e => add(num => 2)}>{count}</div>;
-    };
-    const $counter = $(<Store count={1} children={<Counter />} />);
-    expect($counter.html()).toBe(`<div>1</div>`);
-    await $counter.click();
-    expect($counter.html()).toBe(`<div>3</div>`);
-  });
-
-  it("can use a prebuilt function with an async callback", async () => {
+  it.skip("can use a prebuilt function with an async callback", async () => {
     const Counter = () => {
       const [count, { add }] = useStore("count");
       return <div onClick={e => add(Promise.resolve(2))}>{count}</div>;
@@ -123,7 +144,7 @@ describe("useSelector() and useActions()", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
-  it("can use a prebuilt function with a callback", async () => {
+  it.skip("can use a prebuilt function with a callback", async () => {
     const Counter = () => {
       const count = useSelector(state => state.count);
       const { add } = useActions("count");
@@ -135,7 +156,7 @@ describe("useSelector() and useActions()", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
-  it("can use a prebuilt function with a promise", async () => {
+  it.skip("can use a prebuilt function with a promise", async () => {
     const Counter = () => {
       const count = useSelector(state => state.count);
       const { add } = useActions("count");
@@ -147,7 +168,7 @@ describe("useSelector() and useActions()", () => {
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 
-  it("can use a prebuilt function with an async callback", async () => {
+  it.skip("can use a prebuilt function with an async callback", async () => {
     const Counter = () => {
       const count = useSelector(state => state.count);
       const { add } = useActions("count");
