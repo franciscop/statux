@@ -7,7 +7,7 @@ import React, {
 } from "react";
 
 // https://github.com/facebook/react/issues/14110#issuecomment-446845886
-const Context = createContext({});
+export const Context = createContext({});
 
 const { Provider } = Context;
 
