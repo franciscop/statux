@@ -83,31 +83,7 @@ export default () => (
 );
 ```
 
-It is highly recommended that your state tree, especially on the root, has the basic empty structure from the get-go:
-
-```js
-const BookList = () => {
-  const [books] = useStore('books');
-  if (!books.length) return 'No books yet';
-  return books.map(book => <Book {...book} />);
-};
-
-// RECOMMENDED
-export default () => (
-  <Store books={[]}>
-    <BookList />
-  </Store>
-);
-
-// NOT RECOMMENDED
-export default () => (
-  <Store books={null}>
-    <BookList />
-  </Store>
-);
-```
-
-When your state starts to grow - but not before - it is also recommended to split it into a separated variable for clarity:
+When your state starts to grow - but not before - it is recommended to split it into a separated variable for clarity:
 
 ```js
 // src/App.js
@@ -133,7 +109,7 @@ That's all you need to know for creating your state. When your app starts to gro
 
 ### useStore()
 
-This is a [React hook](https://reactjs.org/docs/hooks-overview.html) to handle a state subtree. It accepts **a selector** and returns an array similar to [React's `useState()`](https://reactjs.org/docs/hooks-state.html):
+This is a [React hook](https://reactjs.org/docs/hooks-overview.html) to handle a state subtree. It accepts **a string selector** and returns an array similar to [React's `useState()`](https://reactjs.org/docs/hooks-state.html):
 
 ```js
 import { useStore } from 'statux';
@@ -164,7 +140,7 @@ export default () => {
 };
 ```
 
-It accepts a *string* selector that will find the corresponding state subtree, and also return a modifier for that subtree. `useStore()` behaves as the text-based selector for `useSelector()` and `useActions()` together:
+It accepts a *string* selector that will find the corresponding state subtree, and also return a modifier for that subtree. `useStore()` behaves as the string selector for `useSelector()` and `useActions()` together:
 
 ```js
 const [user, setUser] = useStore('user');
@@ -503,6 +479,15 @@ export default () => (
 
 Why did I create this instead of using useState+useContext() or Redux? There are few reasons that you might care about:
 
+
+### Direct manipulation
+
+It is a lot simpler in the way it handles state, which is great to avoid the relatively huge boilerplate that comes with small projects with Redux. Instead of defining the reducers, actions, action creators, thunk action creators, etc. you manipulate the state directly. Statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642).
+
+On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antippatern](https://rangle.slides.com/yazanalaboudi/deck) you can give Statux a try.
+
+
+
 ### Truly immutable
 
 The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
@@ -553,8 +538,3 @@ const onSubmit = book => setBooks([...books, book]);
 const onSubmit = book => setBooks(books => [...books, book]);
 const onSubmit = book => setBooks.append(book);
 ```
-
-
-### Direct manipulation
-
-Change the state without going through reducers, actions, action creators, thunk action creators, etc. Still immutable, but statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642). Refactoring your codebase becomes more expensive though, and this is **not** following the Flux arquitecture.
