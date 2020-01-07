@@ -2,8 +2,7 @@ import Store, { useActions, useStore, useSelector } from "../index.js";
 
 import "babel-polyfill";
 import React, { useEffect } from "react";
-import $ from "./react-query";
-import delay from "delay";
+import $ from "react-query-test";
 
 // The HTML list; we're not testing this, just a helper
 const DisplayList = ({ items, onClick }) => (

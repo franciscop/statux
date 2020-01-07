@@ -2,8 +2,8 @@ import Store, { useStore, useSelector, useActions } from "../index.js";
 
 import "babel-polyfill";
 import React from "react";
-import $ from "./react-query";
-import delay from "delay";
+import $ from "react-query-test";
+import { act } from "react-dom/test-utils";
 
 describe("useStore()", () => {
   // We define and test a counter:
@@ -81,6 +81,23 @@ describe("useStore()", () => {
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
     await $counter.click();
+    expect($counter.html()).toBe(`<div>3</div>`);
+  });
+
+  it("can use delayed async with a callback", async () => {
+    const Counter = () => {
+      const [count, setCount] = useStore("count");
+      const onClick = e => {
+        setCount(async num => {
+          await new Promise(done => setTimeout(done, 100));
+          return num + 2;
+        });
+      };
+      return <div onClick={onClick}>{count}</div>;
+    };
+    const $counter = $(<Store count={1} children={<Counter />} />);
+    expect($counter.html()).toBe(`<div>1</div>`);
+    await $counter.click(200);
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 });

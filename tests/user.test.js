@@ -3,7 +3,7 @@ import Store, { useStore, useSelector } from "../index.js";
 
 import "babel-polyfill";
 import React from "react";
-import $ from "./react-query";
+import $ from "react-query-test";
 import delay from "delay";
 
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };

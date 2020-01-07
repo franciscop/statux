@@ -3,30 +3,37 @@ import Store, { useStore, useSelector } from "../index.js";
 
 import "babel-polyfill";
 import React from "react";
-import $ from "./react-query";
-import delay from "delay";
+import $ from "react-query-test";
 
 const baseUser = { id: 1, name: "John", friends: [{ id: 2, name: "Maria" }] };
 
-const User = ({ onClick }) => {
+const User = ({ onClick, onError }) => {
   const [user, setUser] = useStore("user");
   return (
-    <div onClick={e => onClick(user)}>
+    <div
+      onClick={e => {
+        try {
+          onClick(user);
+        } catch (error) {
+          onError(error);
+        }
+      }}
+    >
       {user.id} - {user.name}
     </div>
   );
 };
 
 const mutate = async (user, onClick) => {
+  let error;
+  const onError = err => (error = err);
   const $user = $(
-    <Store user={baseUser} children={<User onClick={onClick} />} />
+    <Store user={baseUser}>
+      <User onClick={onClick} onError={onError} />
+    </Store>
   );
-  try {
-    await $user.click();
-    return false;
-  } catch (error) {
-    return error;
-  }
+  await $user.click();
+  return error;
 };
 
 describe("Disable mutations", () => {
@@ -91,57 +98,36 @@ describe("Disable mutations", () => {
   });
 
   it("stays frozen after an iteration", async () => {
-    const User = ({}) => {
+    const User = ({ onError }) => {
       const [user, setUser] = useStore("user");
       const onClick = e => {
-        if (user.name === "John") {
-          return setUser({ id: 1, name: "Mark" });
+        try {
+          if (user.name === "John") {
+            return setUser({ id: 1, name: "Mark" });
+          }
+          user.id = 5;
+        } catch (error) {
+          onError(error);
         }
-        expect(user).toMatchObject({ id: 1, name: "Mark" });
-        user.id = 5;
       };
       return <div onClick={onClick} />;
     };
 
     const catcher = async () => {
-      const $user = $(<Store user={{ name: "John" }} children={<User />} />);
-      try {
-        await $user.click();
-        await $user.click();
-        return false;
-      } catch (error) {
-        return error;
-      }
+      let error;
+      const $user = $(
+        <Store user={{ name: "John" }}>
+          <User onError={err => (error = err)} />
+        </Store>
+      );
+      await $user.click();
+      await $user.click();
+      return error;
     };
 
     const error = await catcher();
     expect(error).toBeTruthy();
     expect(error.name).toBe("TypeError");
     expect(error.message).toMatch("Cannot assign to read only property 'id'");
-  });
-
-  it("stays frozen after an iteration", async () => {
-    const User = ({}) => {
-      const [user, setUser] = useStore("user");
-      const onClick = e =>
-        setUser(user => {
-          user.name = "Mark";
-        });
-      return <div onClick={onClick} />;
-    };
-
-    const catcher = async () => {
-      const $user = $(<Store user={{ name: "John" }} children={<User />} />);
-      try {
-        await $user.click();
-      } catch (error) {
-        return error;
-      }
-    };
-
-    const error = await catcher();
-    expect(error).toBeTruthy();
-    expect(error.name).toBe("TypeError");
-    expect(error.message).toMatch("Cannot assign to read only property 'name'");
   });
 });
