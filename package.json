@@ -11,7 +11,7 @@
   "scripts": {
     "build": "webpack -c",
     "size": "echo $(gzip -c index.min.js | wc -c) bytes",
-    "pretest": "npm run build",
+    "start": "jest --watch",
     "test": "jest --coverage"
   },
   "keywords": [
