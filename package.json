@@ -2,12 +2,17 @@
   "name": "statux",
   "version": "1.1.1",
   "description": "React state management made awesome",
+  "homepage": "https://github.com/franciscop/statux#readme",
+  "repository": "https://github.com/franciscop/statux.git",
+  "bugs": "https://github.com/franciscop/statux/issues",
+  "funding": "https://www.paypal.me/franciscopresencia/19",
   "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
-  "main": "index.min.js",
+  "license": "MIT",
   "scripts": {
-    "start": "jest --coverage --watch",
     "build": "webpack -c",
-    "test": "jest --coverage --forceExit"
+    "size": "echo $(gzip -c index.min.js | wc -c) bytes",
+    "pretest": "npm run build",
+    "test": "jest --coverage"
   },
   "keywords": [
     "statux",
@@ -16,17 +21,12 @@
     "react",
     "hooks",
     "manage",
-    "change"
+    "change",
+    "data"
   ],
-  "homepage": "https://github.com/franciscop/statux#readme",
-  "repository": "git@github.com:franciscop/statux.git",
-  "license": "MIT",
-  "funding": {
-    "type": "paypal",
-    "url": "https://www.paypal.me/franciscopresencia/19"
-  },
-  "dependencies": {},
+  "main": "index.min.js",
   "files": [],
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
