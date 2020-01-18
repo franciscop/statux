@@ -25,7 +25,7 @@ describe("User", () => {
     expect($user.html()).toEqual("<div>{}</div>");
   });
 
-  it("can set the name", async () => {
+  it.only("can set the name", async () => {
     const user = {};
     const onClick = (user, setUser) => setUser({ name: "John" });
     const $user = $(<App user={user} onClick={onClick} />);

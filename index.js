@@ -2,6 +2,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   useRef
 } from "react";
@@ -128,30 +129,36 @@ const useSubscription = (sel = state => state) => {
   const selRef = useRef(sel);
   const subRef = useRef(null);
 
-  // New selector, reset it, unsubscribe from the old one and leave it empty
-  // for the next subscription
-  if (selRef.current !== sel) {
-    // console.log("RESET", selRef.current, sel);
-    selRef.current = sel;
-    if (subRef.current) subRef.current();
-    subRef.current = null;
-  }
+  useEffect(() => {
+    // New selector, reset it, unsubscribe from the old one and leave it empty
+    // for the next subscription
+    if (selRef.current !== sel) {
+      // console.log("A", sel.toString(), selRef.current.toString());
+      // console.log("RESET", selRef.current, sel);
+      selRef.current = sel;
+      if (subRef.current) subRef.current();
+      subRef.current = null;
+    }
 
-  if (!subRef.current) {
-    subRef.current = subscribe(old => {
-      // console.log("Subscription", selRef.current, sel, old, state);
-      const oldFragment = dotGet(old, selRef.current);
-      const newFragment = dotGet(state.current, selRef.current);
-      if (oldFragment === newFragment) return;
-      // console.log("CHANGED:", oldFragment, newFragment);
-      // console.log("Current:", state.current);
-      update({});
-    });
-  }
+    if (!subRef.current) {
+      subRef.current = subscribe(old => {
+        // console.log("B", sel.toString());
+        // console.log("Subscription", selRef.current, sel, old, state);
+        const oldFragment = dotGet(old, selRef.current);
+        const newFragment = dotGet(state.current, selRef.current);
+        if (oldFragment === newFragment) return;
+        // console.log("CHANGED:", oldFragment, newFragment);
+        // console.log("Current:", state.current);
+        update({});
+      });
+    }
+    return () => {
+      if (subRef.current) subRef.current();
+    };
+  }, []);
 };
 
 export const useSelector = (sel = state => state) => {
-  useSubscription(sel);
   const { state } = useContext(Context);
   return freeze(dotGet(state.current, sel));
 };

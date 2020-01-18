@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: "index.min.js",
-    library: "statux",
+    library: pkg.name,
     libraryTarget: "umd2",
     umdNamedDefine: true
   },
@@ -20,9 +20,6 @@ module.exports = {
         use: ["babel-loader"]
       }
     ]
-  },
-  resolve: {
-    extensions: ["*", ".js", ".jsx"]
   },
   resolve: {
     alias: {
