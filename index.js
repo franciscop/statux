@@ -18,6 +18,7 @@ const dotGet = (obj, sel) => {
   if (typeof sel === "function") return sel(obj);
   return sel.split(".").reduce((obj, i) => obj[i], obj);
 };
+
 const dotSet = (obj, sel, value) => {
   if (!sel) return value;
   const [key, ...rest] = sel.split(".");
@@ -80,6 +81,9 @@ const createActions = (stateRef, sel, setState) => {
     };
 
     // Mutation methods
+    // It cannot be e.g. (...args) => setter(prev => prev.slice().pop(...args)) // because we don't want to set it to the result of the operation;
+    // we want to set it to the mutated array, and then return the result of
+    // the operation. See the mutate() method above
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Mutator_methods
     setter.fill = (...args) => mutate(prev => prev.fill(...args));
     setter.pop = (...args) => mutate(prev => prev.pop(...args));
