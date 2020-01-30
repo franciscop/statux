@@ -1,8 +1,8 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg)](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
+> **This package is broken now**. Please beware that you might find "zombie children", similar to [Redux](https://react-redux.js.org/api/hooks#stale-props-and-zombie-children), I'm trying to find a solution now, but I'd recomment *not* using this package for the time being.
+
 A straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html) and [immutable state](#truly-immutable):
-
-
 
 <a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img width="46%" align="right" src="https://user-images.githubusercontent.com/2801252/62548095-8e97d180-b866-11e9-8fef-bec7d8c0faaf.png" /><img width="46%" float="left" src="https://user-images.githubusercontent.com/2801252/62547754-03b6d700-b866-11e9-889b-17441bee108e.png" /></a>
 
