@@ -6,6 +6,7 @@ import React, {
   useState,
   useRef
 } from "react";
+import { unstable_batchedUpdates } from "react-dom";
 
 // https://github.com/facebook/react/issues/14110#issuecomment-446845886
 export const Context = createContext({});
@@ -125,50 +126,41 @@ const createActions = (stateRef, sel, setState) => {
 // Rerender whatever is listening when there's a change in the state fragment
 // derived from the selector, which might happen because of a state change or
 // because of a selector change
-const useSubscription = (sel = state => state) => {
-  const { state, subscribe } = useContext(Context);
-  const init = dotGet(state.current, sel);
-  const [_, update] = useState({});
-
-  const selRef = useRef(sel);
-  const subRef = useRef(null);
-
-  useEffect(() => {
-    // New selector, reset it, unsubscribe from the old one and leave it empty
-    // for the next subscription
-    if (selRef.current !== sel) {
-      // console.log("A", sel.toString(), selRef.current.toString());
-      // console.log("RESET", selRef.current, sel);
-      selRef.current = sel;
-      if (subRef.current) subRef.current();
-      subRef.current = null;
-    }
-
-    if (!subRef.current) {
-      subRef.current = subscribe(old => {
-        // console.log("B", sel.toString());
-        // console.log("Subscription", selRef.current, sel, old, state);
-        const oldFragment = dotGet(old, selRef.current);
-        const newFragment = dotGet(state.current, selRef.current);
-        if (oldFragment === newFragment) return;
-        // console.log("CHANGED:", oldFragment, newFragment);
-        // console.log("Current:", state.current);
-        update({});
-      });
-    }
-    return () => {
-      if (subRef.current) subRef.current();
-    };
-  }, []);
-};
-
 export const useSelector = (sel = state => state) => {
-  const { state } = useContext(Context);
-  return freeze(dotGet(state.current, sel));
+  const { state, subscribe } = useContext(Context);
+
+  // By using a function, we only trigger dotGet() on the first render,
+  // so we avoid calling a potentially expensive operation too often
+  // const [local, setLocal] = useState(() => dotGet(state.current, sel));
+  // console.log("Local:", local, sel, state.current);
+
+  const local = useRef();
+  local.current = dotGet(state.current, sel);
+  const [, forceUpdate] = useState();
+
+  useEffect(
+    () => {
+      // The unsubscribe() is the returned value
+      return subscribe(old => {
+        try {
+          const fragment = dotGet(state.current, sel);
+          // console.log("Subscription", sel.toString());
+          // console.log("Update:", old, "->", state.current);
+          if (local.current === fragment) return;
+        } catch (error) {}
+        forceUpdate({});
+      });
+    },
+    [sel]
+  );
+
+  // console.log("Updated!");
+
+  return freeze(local.current);
 };
 
 export const useActions = sel => {
-  useSubscription(sel);
+  useSelector(sel);
   const { state, setState } = useContext(Context);
   // console.log("useActions", sel, state);
   const callback = createActions(state, sel, value => {
@@ -177,7 +169,16 @@ export const useActions = sel => {
   return useCallback(callback, [sel]);
 };
 
-export const useStore = name => [useSelector(name), useActions(name)];
+export const useStore = sel => {
+  const { state, setState } = useContext(Context);
+  const slice = useSelector(sel);
+  // console.log("useStore", sel, state, slice);
+  const callback = createActions(state, sel, value => {
+    setState(dotSet(state.current, sel, value));
+  });
+  const setter = useCallback(callback, [sel]);
+  return [slice, setter];
+};
 
 export default ({ children, ...initial }) => {
   const state = useRef(initial);
@@ -187,12 +188,23 @@ export default ({ children, ...initial }) => {
     // Unsubscribe in the callback
     return () => subs.splice(subs.findIndex(item => item === fn), 1);
   };
-  const setState = newState => {
+
+  // Update the global, full state. This should trigger a re-render cascade on
+  // all the subscriptions that are active
+  const setState = updated => {
     const old = state.current;
-    // console.log("BEGIN", old, newState);
-    state.current = newState;
-    subs.forEach(sub => sub(old));
-    // console.log("DONE", old, newState);
+    // console.log("BEGIN", old, updated);
+    state.current = updated;
+    unstable_batchedUpdates(() => {
+      subs
+        .slice()
+        .reverse()
+        .forEach(sub => {
+          sub(old);
+        });
+    });
+
+    // console.log("DONE", old, updated);
   };
   return <Provider value={{ state, setState, subscribe }}>{children}</Provider>;
 };
