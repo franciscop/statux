@@ -1,8 +1,9 @@
-import Store, { useStore, useSelector, useActions } from "../index.js";
-
 import "babel-polyfill";
 import React, { memo } from "react";
-import $ from "react-query-test";
+import $ from "react-test";
+
+import Store, { useStore, useSelector, useActions } from "../index.js";
+
 const delay = time => new Promise(done => setTimeout(done, time));
 
 // This extracts the state from the selector with the provided function
@@ -108,6 +109,52 @@ describe("useStore()", () => {
         </ul>
       );
     };
+    const $todo = $(
+      <Store todo={init}>
+        <div>
+          <DeleteItem />
+          <TodoList />
+        </div>
+      </Store>
+    );
+    expect($todo.find("ul").html()).toBe(
+      "<ul><li>abc</li><li>def</li><li>ghi</li></ul>"
+    );
+    await $todo.find("button").click();
+    await delay(200);
+    expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
+  });
+
+  it("can delete items and catches the error even with memo", async () => {
+    const init = [
+      { id: 0, text: "abc" },
+      { id: 1, text: "def" },
+      { id: 2, text: "ghi" }
+    ];
+    const DeleteItem = memo(() => {
+      const [todo, setTodo] = useStore("todo");
+      const onClick = async () => {
+        await delay(100);
+        setTodo(todo => todo.filter(it => it.id !== 1));
+      };
+      return <button onClick={onClick}>Delete</button>;
+    });
+    const TodoItem = memo(({ id }) => {
+      const text = useSelector(
+        state => state.todo.find(it => it.id === id).text
+      );
+      return <li>{text}</li>;
+    });
+    const TodoList = memo(() => {
+      const todos = useSelector(state => state.todo.map(it => it.id));
+      return (
+        <ul>
+          {todos.map(id => (
+            <TodoItem key={id} id={id} />
+          ))}
+        </ul>
+      );
+    });
     const $todo = $(
       <Store todo={init}>
         <div>

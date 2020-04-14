@@ -1,8 +1,8 @@
-import Store, { useActions, useStore, useSelector } from "../index.js";
-
 import "babel-polyfill";
 import React, { useEffect } from "react";
-import $ from "react-query-test";
+import $ from "react-test";
+
+import Store, { useActions, useStore, useSelector } from "../index.js";
 
 // The HTML list; we're not testing this, just a helper
 const DisplayList = ({ items, onClick }) => (

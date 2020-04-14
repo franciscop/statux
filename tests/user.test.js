@@ -1,10 +1,9 @@
-// User.test.js - test nested properties and deep selectors
-import Store, { useStore, useSelector } from "../index.js";
-
 import "babel-polyfill";
 import React from "react";
-import $ from "react-query-test";
+import $ from "react-test";
 import delay from "delay";
+
+import Store, { useStore, useSelector } from "../index.js";
 
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };
 

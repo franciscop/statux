@@ -138,21 +138,18 @@ export const useSelector = (sel = state => state) => {
   local.current = dotGet(state.current, sel);
   const [, forceUpdate] = useState();
 
-  useEffect(
-    () => {
-      // The unsubscribe() is the returned value
-      return subscribe(old => {
-        try {
-          const fragment = dotGet(state.current, sel);
-          // console.log("Subscription", sel.toString());
-          // console.log("Update:", old, "->", state.current);
-          if (local.current === fragment) return;
-        } catch (error) {}
-        forceUpdate({});
-      });
-    },
-    [sel]
-  );
+  useEffect(() => {
+    // The unsubscribe() is the returned value
+    return subscribe(old => {
+      try {
+        const fragment = dotGet(state.current, sel);
+        // console.log("Subscription", sel.toString());
+        // console.log("Update:", old, "->", state.current);
+        if (local.current === fragment) return;
+      } catch (error) {}
+      forceUpdate({});
+    });
+  }, [sel]);
 
   // console.log("Updated!");
 
