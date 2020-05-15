@@ -559,9 +559,9 @@ Why did I create Statux instead of using useState+useContext() or Redux? There a
 
 ### React Hooks
 
-Every time there's a major shift on a technology it is a good chance to reevaluate our choices. And React Hooks is no different, our components are now cleaner and the code is easier to reuse than ever.
+When there's a major shift on a technology it's a good chance to reevaluate our choices. And React Hooks is no different, our components are now cleaner and the code is easier to reuse than ever.
 
-So I wanted a **minimal** library that follows React Hooks' pattern of accessing and writing state, but on an app-level instead of a component-basis. I tried with Context for a while, but found that you have to create many contexts to avoid some issues ([by design](https://github.com/facebook/react/issues/15156#issuecomment-474590693)) and found that too cumbersome. Just `useState`, but globally.
+So I wanted a *minimal* library that follows React Hooks' pattern of accessing and writing state, but on an app-level instead of a component-level. I tried with Context for a while, but found that you have to create many contexts to avoid some issues ([by design](https://github.com/facebook/react/issues/15156#issuecomment-474590693)) and found that too cumbersome. I just wanted `useState`, but globally.
 
 So here it is, now you can use `useStore()` as a global `useState()`. I've followed Hooks' syntax where possible, with differences only when needed e.g. not initial state on a component-level since that's global:
 
