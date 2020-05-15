@@ -314,7 +314,7 @@ const BookForm = () => {
 
 ## Examples
 
-Some examples to show how *statux* works. Help me write these? And feel free to [suggest new ones](https://github.com/franciscop/statux/issues/new?template=suggest-example.md).
+Some examples to show how *statux* works. Feel free to [suggest new ones](https://github.com/franciscop/statux/issues/new?template=suggest-example.md).
 
 ### Todo list
 
@@ -336,33 +336,33 @@ export default () => (
 // TodoList.js
 import { useStore } from "statux";
 import React from "react";
-import forn from "forn";
+import Form from "form-mate";
 
-const Todo = ({ index }) => {
+function TodoItem({ index }) {
   const [item, setItem] = useStore(`todo.${index}`);
   return (
     <li onClick={() => setItem.assign({ done: !item.done })}>
       {item.done ? <strike>{item.text}</strike> : item.text}
     </li>
   );
-};
+}
 
-export default () => {
+export default function TodoList() {
   const [todo, { append }] = useStore("todo");
   return (
     <ul>
       {todo.map((item, i) => (
-        <Todo key={i + "-" + item.text} index={i} />
+        <TodoItem key={item.text} index={i} />
       ))}
       <li>
-        <form onSubmit={forn(append, { reset: true })}>
+        <Form onSubmit={append} autoReset>
           <input name="text" placeholder="Add item" />
           <button>Add</button>
-        </form>
+        </Form>
       </li>
     </ul>
   );
-};
+}
 ```
 
 ### Initial data loading
