@@ -368,7 +368,7 @@ export default function TodoList() {
 
 ### Initial data loading
 
-See pokemon loading list with graphics ([**see codesandbox**](https://codesandbox.io/s/elastic-glitter-crofz)):
+Load a pokemon list with graphics from an API ([**see codesandbox**](https://codesandbox.io/s/elastic-glitter-crofz)):
 
 ![Pokemon List](./assets/pokemon.png)
 
