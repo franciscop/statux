@@ -319,9 +319,9 @@ Some examples to show how *statux* works. Feel free to [suggest new ones](https:
 
 ### Todo list
 
-A TODO list in 30 lines (click image for the demo):
+A TODO list in 30 lines ([**see codesandbox]**](https://codesandbox.io/s/elegant-tdd-c8jlq)):
 
-[![TODO List](./assets/todo.png)](https://codesandbox.io/s/elegant-tdd-c8jlq)
+![TODO List](./assets/todo.png)
 
 ```js
 // App.js
@@ -368,9 +368,9 @@ export default function TodoList() {
 
 ### Initial data loading
 
-See pokemon loading list with graphics (click image for the demo):
+See pokemon loading list with graphics ([**see codesandbox**](https://codesandbox.io/s/elastic-glitter-crofz)):
 
-[![Pokemon List](./assets/pokemon.png)](https://codesandbox.io/s/elastic-glitter-crofz)
+![Pokemon List](./assets/pokemon.png)
 
 ```js
 // src/App.js
@@ -515,7 +515,7 @@ export default () => (
 
 ### Reset initial state
 
-To reset the initial state we should first keep it separated, and then trigger a reset from the root state ([**see working codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
+To reset the initial state we should first keep it separated, and then trigger a reset from the root state ([**see codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
 
 ```js
 import React from "react";
@@ -557,6 +557,21 @@ export default () => (
 Why did I create Statux instead of using useState+useContext() or Redux? There are few reasons that you might care about:
 
 
+### React Hooks
+
+Every time there's a major shift on a technology it is a good chance to reevaluate our choices. And React Hooks is no different, our components are now cleaner and the code is easier to reuse than ever.
+
+So I wanted a **minimal** library that follows React Hooks' pattern of accessing and writing state, but on an app-level instead of a component-basis. I tried with Context for a while, but found that you have to create many contexts to avoid some issues ([by design](https://github.com/facebook/react/issues/15156#issuecomment-474590693)) and found that too cumbersome. Just `useState`, but globally.
+
+So here it is, now you can use `useStore()` as a global `useState()`. I've followed Hooks' syntax where possible, with differences only when needed e.g. not initial state on a component-level since that's global:
+
+```js
+const [user, setUser] = useState(null);  // React Hooks
+const [user, setUser] = useStore('user');  // Statux
+```
+
+
+
 ### Direct manipulation
 
 It is a lot simpler in the way it handles state, which is great to avoid the relatively huge boilerplate that comes with small projects with Redux. Instead of defining the reducers, actions, action creators, thunk action creators, etc. you manipulate the state directly. Statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642).
@@ -567,7 +582,7 @@ On the downside, this couples the state structure and operations, so for large p
 
 ### Truly immutable
 
-The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
+The whole state is [frozen with a recursive `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
 
 ```js
 const App = () => {
@@ -578,12 +593,12 @@ const App = () => {
 };
 ```
 
-This will avoid whole categories of bugs. Did you know these for instance?
+This will avoid whole categories of bugs for newbies working on your team and experienced devs as well:
 
 - `arr.sort((a, b) => {...}).map()` is also mutating the original array.
 - `setValue(value++)` will mutate the original value.
 
-It will throw a TypeError since you cannot mutate the state directly. Instead, try defining a new variable if you indeed want to read it with a default:
+When you try to mutate the state directly it will throw a TypeError. Instead, try defining a new variable if you indeed want to read it with a default:
 
 ```js
 const App = () => {
@@ -593,7 +608,7 @@ const App = () => {
 };
 ```
 
-Or directly access the name with the correct selector and a default:
+Or directly access the name with the correct selector and a default if you know `user` is defined:
 
 ```js
 const App = () => {
@@ -602,7 +617,7 @@ const App = () => {
 };
 ```
 
-When you want to change the state, you can do it without mutations or use one of the helpers we provide:
+Statux also provides some helpers for modifying the state easily:
 
 ```js
 // Set the name of the user
