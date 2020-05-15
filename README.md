@@ -420,20 +420,57 @@ export default () => {
 
 ### API calls
 
-When calling an API, make sure you are using React's `useEffect()`:
+You can combine Statux with API calls as usual. For example, you might have a local token to verify on an API:
 
 ```js
+// UserProfile.js - omitted unmounted check and error handling for brevity
+import React from 'react';
+import { useStore } from 'statux';
+import useAsyncEffect from 'use-async-effect';
+import axios from 'axios';
+
+export default () => {
+  const token = localStorage.token;
+  const [user, setUser] = useStore('user');
+
+  // Use your favourite async effect
+  useAsyncEffect(async () => {
+    // The user was never logged in
+    if (!token) return;
+    const { data } = await axios.post('/api/user', { token });
+    setUser(data);
+  }, []);
+
+  if (token) {
+    if (!user) return 'Loading...';
+    return <p>Hello {user.name}</p>;
+  } else {
+    // Defined below
+    return <Login />;
+  }
+}
+```
+
+> Tip: we are using [`axios`](https://github.com/axios/axios) and [`use-async-effect`](https://www.npmjs.com/package/use-async-effect) to handle async API requests.
+
+The Login.js could be defined like this:
+
+```js
+import { useActions } from 'statux';
+import Form from 'form-mate';
+
 // Login.js
 export default () => {
-  const [auth, setAuth] = useStore('auth');
-  const onSubmit = useCallback(async data => {
-    const token = await api.login(data);
-    setAuth(token);
-  }, [auth]);
+  const setUser = useActions('user');
+  const onSubmit = async data => {
+    const { data } = await axios.post('/login', data);
+    localStorage.token = data.token;
+    setUser(data.user);
+  };
   return (
-    <LoginForm onSubmit={onSubmit}>
+    <Form onSubmit={onSubmit}>
       {...}
-    </LoginForm>
+    </Form>
   );
 }
 ```
@@ -477,7 +514,7 @@ export default () => (
 
 ### Reset initial state
 
-To reset the initial state we should first keep this separated, and then trigger a reset from the root state:
+To reset the initial state we should first keep it separated, and then trigger a reset from the root state:
 
 ```js
 import Store, { useSelector } from 'statux';
@@ -503,14 +540,14 @@ export default () => (
 
 ## Motivation
 
-Why did I create this instead of using useState+useContext() or Redux? There are few reasons that you might care about:
+Why did I create Statux instead of using useState+useContext() or Redux? There are few reasons that you might care about:
 
 
 ### Direct manipulation
 
 It is a lot simpler in the way it handles state, which is great to avoid the relatively huge boilerplate that comes with small projects with Redux. Instead of defining the reducers, actions, action creators, thunk action creators, etc. you manipulate the state directly. Statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642).
 
-On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antippatern](https://rangle.slides.com/yazanalaboudi/deck) you can give Statux a try.
+On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you can give Statux a try.
 
 
 
