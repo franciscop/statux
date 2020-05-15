@@ -576,13 +576,13 @@ const [user, setUser] = useStore('user');  // Statux
 
 It is a lot simpler in the way it handles state, which is great to avoid the relatively huge boilerplate that comes with small projects with Redux. Instead of defining the reducers, actions, action creators, thunk action creators, etc. you manipulate the state directly. Statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642).
 
-On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you can give Statux a try.
+On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you might not really need Redux, so give Statux a try to see if it simplifies your code.
 
 
 
 ### Truly immutable
 
-The whole state is [frozen with a recursive `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
+The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) so no accidental mutation can drive subtle bugs and stale state. Try mutating the state of your app for testing ([**see demo**](https://codesandbox.io/s/gallant-firefly-59684)):
 
 ```js
 const App = () => {
