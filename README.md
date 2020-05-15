@@ -479,7 +479,7 @@ export default () => {
 
 ### Login and localStorage
 
-Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically ([**see working codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
+Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically:
 
 ```js
 import React from "react";
@@ -515,26 +515,39 @@ export default () => (
 
 ### Reset initial state
 
-To reset the initial state we should first keep it separated, and then trigger a reset from the root state:
+To reset the initial state we should first keep it separated, and then trigger a reset from the root state ([**see working codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
 
 ```js
-import Store, { useSelector } from 'statux';
+import React from "react";
+import Store, { useActions, useStore } from "statux";
 
 // Define the initial state as an object
 const init = { user: null, todo: [] };
 
-// We then trigger a useStore without any selector
+// We then trigger a useActions without any selector
 const ResetState = () => {
-  const setState = useStore();
-  return <button onClick={e => setState(init)}></button>;
+  const setState = useActions();
+  const reset = () => setState(init);
+  return <button onClick={reset}>Clear</button>;
+};
+
+const Login = () => {
+  const [user, setUser] = useStore("user");
+  const login = () => setUser("Mike");
+  if (user) return <p>Hi {user}</p>;
+  return (
+    <p>
+      <button onClick={login}>Login</button>
+    </p>
+  );
 };
 
 export default () => (
-  <Store auth={auth}>
+  <Store {...init}>
     <ResetState />
-    ...
+    <Login />
   </Store>
-)
+);
 ```
 
 
