@@ -41,10 +41,11 @@ import { useStore } from 'statux';
 
 export default () => {
   const [user, setUser] = useStore('user');
+  const login = () => setUser({ name: 'Maria' });
   return (
     <div>
       Hello {user ? user.name : (
-        <button onClick={e => setUser({ name: 'Maria' })}>Login</button>
+        <button onClick={login}>Login</button>
       )}
     </div>
   )
