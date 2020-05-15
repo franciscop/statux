@@ -289,7 +289,7 @@ setBooks.reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
 
 // For the state of: user = { id: 1, name: 'John' }
 const setUser = useActions('user');
-setUser(user => ({ ...user, name: 'Sarah' });   // { id: 1, name: 'Sarah' }
+setUser(user => ({ ...user, name: 'Sarah' }));   // { id: 1, name: 'Sarah' }
 
 setUser.assign({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
 setUser.extend({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
@@ -441,35 +441,63 @@ export default () => {
 
 ### Login and localStorage
 
-Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically:
+Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically ([**see working codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
 
 ```js
-import Store, { useSelector } from 'statux';
+import React from "react";
+import Store, { useActions, useStore } from "statux";
 
-// Initial auth token load
-const auth = localStorage.getItem('auth');
+// Define the initial state as an object
+const init = { user: null, todo: [] };
 
-// Save/remove the auth token when it changes anywhere in the app
-const TokenUpdate = () => {
-  const auth = useSelector('auth');
-  useEffect(() => {
-    localStorage.setItem('auth', auth);
-  }, [auth]);
-  return null;
+// Trigger a useActions without any selector to set the root state
+const ResetState = () => {
+  const setState = useActions();
+  const reset = () => setState(init);
+  return <button onClick={reset}>Clear</button>;
+};
+
+// Mock a login system
+const Login = () => {
+  const [user, setUser] = useStore("user");
+  const login = () => setUser("Mike");
+  if (user) return <p>Hi {user}</p>;
+  return <p><button onClick={login}>Login</button></p>;
 };
 
 export default () => (
-  <Store auth={auth}>
-    <TokenUpdate />
-    ...
+  <Store {...init}>
+    <ResetState />
+    <Login />
   </Store>
-)
+);
 ```
 
 
 
 ### Reset initial state
 
+To reset the initial state we should first keep this separated, and then trigger a reset from the root state:
+
+```js
+import Store, { useSelector } from 'statux';
+
+// Define the initial state as an object
+const init = { user: null, todo: [] };
+
+// We then trigger a useStore without any selector
+const ResetState = () => {
+  const setState = useStore();
+  return <button onClick={e => setState(init)}></button>;
+};
+
+export default () => (
+  <Store auth={auth}>
+    <ResetState />
+    ...
+  </Store>
+)
+```
 
 
 
