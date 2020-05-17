@@ -1,6 +1,6 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg)](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-A straightforward React state management library with [hooks](https://reactjs.org/docs/hooks-overview.html) and [immutable state](#truly-immutable):
+A minimal state management library for React with [Hooks](#react-hooks) and immutable state [immutable state](#truly-immutable):
 
 <a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img width="46%" align="right" src="https://user-images.githubusercontent.com/2801252/62548095-8e97d180-b866-11e9-8fef-bec7d8c0faaf.png" /><img width="46%" float="left" src="https://user-images.githubusercontent.com/2801252/62547754-03b6d700-b866-11e9-889b-17441bee108e.png" /></a>
 
@@ -554,7 +554,7 @@ export default () => (
 
 ## Motivation
 
-Why did I create Statux instead of using useState+useContext() or Redux? There are few reasons that you might care about:
+Why did I create Statux instead of using useState+useContext() or Redux? I built a library that sits between the simple but local React Hooks and the solid but complex full Flux architecture. There are few reasons that you might care about:
 
 
 ### React Hooks
@@ -574,9 +574,22 @@ const [user, setUser] = useStore('user');  // Statux
 
 ### Direct manipulation
 
-It is a lot simpler in the way it handles state, which is great to avoid the relatively huge boilerplate that comes with small projects with Redux. Instead of defining the reducers, actions, action creators, thunk action creators, etc. you manipulate the state directly. Statux removes [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642).
+With Statux you directly define the state you want on your actions. You remove [a full layer of indirection](https://twitter.com/dan_abramov/status/802564042648944642) by **not** following the [Flux architecture](https://www.youtube.com/watch?v=nYkdrAPrdcw).
 
-On the downside, this couples the state structure and operations, so for large projects something following the Flux architecture like Redux would be better suited. If [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you might not really need Redux, so give Statux a try to see if it simplifies your code.
+This removes a lot of boilerplate commonly seen on apps that use Redux. Where many would define the reducers, actions, action creators, thunk action creators, etc. with Statux you change your state directly:
+
+```js
+export default function UserProfile() {
+  const [user, setUser] = useStore('user');
+  if (!user) {
+    const login = () => setUser('Mike');
+    return <button onClick={login}>Login</button>
+  }
+  return user;
+}
+```
+
+This has a disadvantage for very large and complex apps (100+ components) where the coupling of state and actions make changes in the state structure around twice as hard. But if [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you might not really need Redux, so give Statux a try and it *will* simplify your code.
 
 
 
