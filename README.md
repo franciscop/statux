@@ -1,6 +1,6 @@
 # Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg)](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
 
-A minimal state management library for React with [Hooks](#react-hooks) and immutable state [immutable state](#truly-immutable):
+A minimal state management library with React [Hooks](#react-hooks) and [immutable state](#truly-immutable):
 
 <a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img width="46%" align="right" src="https://user-images.githubusercontent.com/2801252/62548095-8e97d180-b866-11e9-8fef-bec7d8c0faaf.png" /><img width="46%" float="left" src="https://user-images.githubusercontent.com/2801252/62547754-03b6d700-b866-11e9-889b-17441bee108e.png" /></a>
 
