@@ -479,34 +479,50 @@ export default () => {
 
 ### Login and localStorage
 
-Now that you know how to call an API for long, let's  see how to store/retrieve the token in localStorage automatically:
+Let's say our webapp is smaller, and we want to keep the TODO list in localStorage:
 
 ```js
 import React from "react";
-import Store, { useActions, useStore } from "statux";
+import Store, { useSelector } from "statux";
 
-// Define the initial state as an object
-const init = { user: null, todo: [] };
+// Define the initial state as an object:
+const todo = JSON.parse(localStorage.todo || '[]');
 
-// Trigger a useActions without any selector to set the root state
-const ResetState = () => {
-  const setState = useActions();
-  const reset = () => setState(init);
-  return <button onClick={reset}>Clear</button>;
-};
-
-// Mock a login system
-const Login = () => {
-  const [user, setUser] = useStore("user");
-  const login = () => setUser("Mike");
-  if (user) return <p>Hi {user}</p>;
-  return <p><button onClick={login}>Login</button></p>;
+// Save this state fragment when it changes:
+const LocalStorage = () => {
+  const todo = useSelector('todo');
+  localStorage.todo = JSON.stringify(todo);
+  return null;
 };
 
 export default () => (
-  <Store {...init}>
-    <ResetState />
-    <Login />
+  <Store todo={todo}>
+    <LocalStorage />
+    ...
+  </Store>
+);
+```
+
+This can be applied to Dark Mode as well, since localStorage is sync we can read it before running any React to avoid flashing a white screen first:
+
+```js
+import React from "react";
+import Store, { useSelector } from "statux";
+
+// Define the initial state as an object:
+const dark = Boolean(localStorage.dark);
+
+// Save this state fragment when it changes:
+const LocalStorage = () => {
+  const dark = useSelector('dark');
+  localStorage.dark = JSON.stringify(dark);
+  return null;
+};
+
+export default () => (
+  <Store dark={dark}>
+    <LocalStorage />
+    ...
   </Store>
 );
 ```
