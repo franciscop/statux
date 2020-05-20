@@ -423,65 +423,40 @@ export default () => {
 
 ### API calls
 
-You can combine Statux with API calls as usual. For example, you might have a local token to verify on an API:
+You already saw how to make initial calls on load [in the previous example]().
+
+Now let's see how to make API calls to respond to a user action, in this case when the user submits the Login form:
 
 ```js
-// UserProfile.js - omitted unmounted check and error handling for brevity
+// LoginForm.js
 import React from 'react';
-import { useStore } from 'statux';
-import useAsyncEffect from 'use-async-effect';
-import axios from 'axios';
-
-export default () => {
-  const token = localStorage.token;
-  const [user, setUser] = useStore('user');
-
-  // Use your favourite async effect
-  useAsyncEffect(async () => {
-    // The user was never logged in
-    if (!token) return;
-    const { data } = await axios.post('/api/user', { token });
-    setUser(data);
-  }, []);
-
-  if (token) {
-    if (!user) return 'Loading...';
-    return <p>Hello {user.name}</p>;
-  } else {
-    // Defined below
-    return <Login />;
-  }
-}
-```
-
-> Tip: we are using [`axios`](https://github.com/axios/axios) and [`use-async-effect`](https://www.npmjs.com/package/use-async-effect) to handle async API requests.
-
-The Login.js could be defined like this:
-
-```js
 import { useActions } from 'statux';
+import axios from 'axios';
 import Form from 'form-mate';
 
-// Login.js
 export default () => {
   const setUser = useActions('user');
   const onSubmit = async data => {
     const { data } = await axios.post('/login', data);
-    localStorage.token = data.token;
-    setUser(data.user);
+    setUser(data);
   };
   return (
     <Form onSubmit={onSubmit}>
-      {...}
+      <input type="text" name="email" placeholder="Email" />
+      <input type="password" name="password" placeholder="Password" />
+      <button>Login</button>
     </Form>
   );
 }
 ```
 
+> The libraries [`axios`](https://www.npmjs.com/package/axios) and [`form-mate`](https://www.npmjs.com/package/form-mate) that we are using here are not needed, but they do make our lifes easier.
 
-### Login and localStorage
 
-Let's say our webapp is smaller, and we want to keep the TODO list in localStorage:
+
+### With localStorage
+
+Let's say we want to keep all of our small WebApp state in localStorage, we can do that as well:
 
 ```js
 import React from "react";
@@ -490,7 +465,7 @@ import Store, { useSelector } from "statux";
 // Define the initial state as an object:
 const todo = JSON.parse(localStorage.todo || '[]');
 
-// Save this state fragment when it changes:
+// Listen for changes on the state and save it in localStorage:
 const LocalStorage = () => {
   const todo = useSelector('todo');
   localStorage.todo = JSON.stringify(todo);
@@ -512,12 +487,11 @@ import React from "react";
 import Store, { useSelector } from "statux";
 
 // Define the initial state as an object:
-const dark = Boolean(localStorage.dark);
+const dark = localStorage.dark === "true";
 
 // Save this state fragment when it changes:
 const LocalStorage = () => {
-  const dark = useSelector('dark');
-  localStorage.dark = JSON.stringify(dark);
+  localStorage.dark = useSelector('dark');
   return null;
 };
 
