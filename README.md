@@ -4,6 +4,8 @@ A minimal state management library with React [Hooks](#react-hooks) and [immutab
 
 <a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img class="full" width="46%" align="right" src="https://user-images.githubusercontent.com/2801252/62548095-8e97d180-b866-11e9-8fef-bec7d8c0faaf.png" /><img class="full" width="46%" float="left" src="https://user-images.githubusercontent.com/2801252/62547754-03b6d700-b866-11e9-889b-17441bee108e.png" /></a>
 
+It allows you to easily share any kind of state across different components of your WebApp with a simple and clean syntax.
+
 Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions),  [*examples*](#examples).
 
 
