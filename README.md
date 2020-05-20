@@ -148,7 +148,7 @@ const user = useSelector('user');
 const setUser = useActions('user');
 ```
 
-> Note: useStore() **only** accepts either a string selector or no selector at all; it **does not** accept ~functions~ or ~objects~ as parameters.
+> Note: useStore() **only** accepts either a string selector or no selector at all; it **does not** accept ~~functions~~ or ~~objects~~ as parameters.
 
 The first returned parameter is the frozen selected state subtree, and the second parameter is the setter. This setter is quite flexible:
 
