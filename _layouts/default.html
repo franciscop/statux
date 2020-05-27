@@ -45,7 +45,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
       </div>
       <div id="top">
         <main>
-          <a class="github" href="{{github}}" target="_blank"></a>
+          {% if layout.github %}<a class="github" href="{{layout.github}}" target="_blank"></a>{% endif %}
           {{content}}
         </main>
       </div>
