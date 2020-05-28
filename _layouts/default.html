@@ -37,6 +37,14 @@ description: Built with React Hooks, immutable state and some great helpers it m
     <meta property="og:description" content="{{layout.description}}" />
   </head>
   <body>
+    {% if layout.github %}
+    <a
+      class="github"
+      href="{{layout.github}}"
+      target="_blank"
+      rel="noopener"
+    ></a>
+    {% endif %}
     <div class="flex">
       <div>
         <div class="wrap">
@@ -45,7 +53,6 @@ description: Built with React Hooks, immutable state and some great helpers it m
       </div>
       <div id="top">
         <main>
-          {% if layout.github %}<a class="github" href="{{layout.github}}" target="_blank"></a>{% endif %}
           {{content}}
         </main>
       </div>
