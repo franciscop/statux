@@ -2,7 +2,7 @@
 
 A minimal state management library with React [Hooks](#react-hooks) and [immutable state](#truly-immutable):
 
-<a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img class="full-mobile" width="46%" align="right" src="./assets/app.png" /><img class="full-mobile" width="46%" float="left" src="./assets/profile.png" /></a>
+<a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img class="full-mobile" width="46%" align="right" src="./assets/profile.png" /><img class="full-mobile" width="46%" float="left" src="./assets/app.png" /></a>
 
 It allows you to share state across different components of your WebApp with a simple and clean syntax. This [reduces a lot of boilerplate](#direct-manipulation) so you can focus on the actual app that you are building.
 
