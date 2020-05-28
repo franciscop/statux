@@ -1,8 +1,8 @@
-# Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg)](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg)](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip)](https://github.com/franciscop/statux/blob/master/index.min.js)
+# Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg "install badge")](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg "test badge")](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip "gzip badge")](https://github.com/franciscop/statux/blob/master/index.min.js)
 
 A minimal state management library with React [Hooks](#react-hooks) and [immutable state](#truly-immutable):
 
-<a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img class="full-mobile" width="46%" align="right" src="./assets/profile.png" /><img class="full-mobile" width="46%" float="left" src="./assets/app.png" /></a>
+<a href="https://codesandbox.io/s/upbeat-swirles-q972b"><img class="full-mobile" width="48%" align="right" src="./assets/profile.png" alt="User Profile example screenshot" /><img class="full-mobile" width="48%" float="left" src="./assets/app.png" alt="App example screenshot" /></a>
 
 It allows you to share state across different components of your WebApp with a simple and clean syntax. This [reduces a lot of boilerplate](#direct-manipulation) so you can focus on the actual app that you are building.
 
@@ -323,7 +323,7 @@ Some examples to show how *statux* works. Feel free to [suggest new ones](https:
 
 A TODO list in 30 lines ([**see codesandbox]**](https://codesandbox.io/s/elegant-tdd-c8jlq)):
 
-![TODO List](./assets/todo.png)
+![TODO List](./assets/todo.png "todo example screenshot")
 
 ```js
 // App.js
@@ -372,7 +372,7 @@ export default function TodoList() {
 
 Load a pokemon list with graphics from an API ([**see codesandbox**](https://codesandbox.io/s/elastic-glitter-crofz)):
 
-![Pokemon List](./assets/pokemon.png)
+![Pokemon List](./assets/pokemon.png "pokemon list example screenshot")
 
 ```js
 // src/App.js
