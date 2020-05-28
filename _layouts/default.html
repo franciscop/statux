@@ -1,6 +1,7 @@
 ---
 title: Statux - A minimal state management library for React
 url: https://statux.dev/
+github: https://github.com/franciscop/statux
 description: Built with React Hooks, immutable state and some great helpers it makes building your React App a lot easier. Install it and it gets out of the way to allow you to focus on your app.
 ---
 
@@ -43,7 +44,10 @@ description: Built with React Hooks, immutable state and some great helpers it m
         </div>
       </div>
       <div id="top">
-        <main>{{content}}</main>
+        <main>
+          {% if layout.github %}<a class="github" href="{{layout.github}}" target="_blank"></a>{% endif %}
+          {{content}}
+        </main>
       </div>
     </div>
 
