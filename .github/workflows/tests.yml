@@ -22,8 +22,3 @@ jobs:
         run: npm test
         env:
           CI: true
-      - name: Code coverage results
-        uses: actions/upload-artifact@v1
-        with:
-          name: code-coverage-report
-          path: coverage/lcov-report/index.html
