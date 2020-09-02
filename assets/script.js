@@ -23,12 +23,12 @@ Prism.hooks.add("after-highlight", function (env) {
 });
 
 // Automatically build the Table of Contents if the aside has the class "auto"
-if (u('aside').hasClass('auto')) {
+if (u("aside").hasClass("auto")) {
   const menus = [];
-  u('article h2, article h3').each(el => {
+  u("article h2, article h3").each((el) => {
     const to = "#" + el.id;
-    const title = u('<div />').text(u(el).text()).html();
-    if (u(el).is('h2')) {
+    const title = u("<div />").text(u(el).text()).html();
+    if (u(el).is("h2")) {
       menus.push({ to, title, sections: [] });
     } else {
       if (menus[menus.length - 1]) {
@@ -57,21 +57,25 @@ if (u('aside').hasClass('auto')) {
   const Section = ({ to, title, sections }) => `
     <section>
       <h3>
-        ${sections.length ? ButtonMore : ''}
+        ${sections.length ? ButtonMore : ""}
         <a href="${to}">
-          ${sections.length ? '' : '<img src="/assets/file.svg">'}
+          ${sections.length ? "" : '<img src="/assets/file.svg">'}
           ${title}
         </a>
       </h3>
-      ${sections.length ? `
+      ${
+        sections.length
+          ? `
         <div class="submenu">
-          ${sections.map(Submenu).join('')}
+          ${sections.map(Submenu).join("")}
         </div>
-      ` : ''}
+      `
+          : ""
+      }
     </section>
   `;
 
-  u('.scroller').append(menus.map(Section).join(''));
+  u(".scroller").append(menus.map(Section).join(""));
 }
 
 const showSection = (section, forceTrue) => {
@@ -94,11 +98,11 @@ if (window.innerWidth > 600) {
   setTimeout(() => {
     const href = window.location.hash || window.location.pathname;
     const target = u(`a[href="${href}"]`);
-    const section = target.closest('section').find('.more').first();
+    const section = target.closest("section").find(".more").first();
     // If the URL+Hash indicates we are in a specific place, highlight that
     if (section) {
       showSection(section);
-    // Otherwise open the first section
+      // Otherwise open the first section
     } else {
       showSection($(".more").first());
     }
@@ -109,8 +113,8 @@ $(".more").on("click", (e) => {
   showSection(e.currentTarget);
 });
 
-$('aside a').on('click', (e) => {
-  const more = $(e.currentTarget).siblings('.more').first();
+$("aside a").on("click", (e) => {
+  const more = $(e.currentTarget).siblings(".more").first();
   if (!more) return;
   showSection(more, true);
 });
