@@ -89,7 +89,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
         const menus = [];
         u('article h2, article h3').each(el => {
           const to = "#" + el.id;
-          const title = u(el).text();
+          const title = u('<div />').text(u(el).text()).html();
           if (u(el).is('h2')) {
             menus.push({ to, title, sections: [] });
           } else {
@@ -103,7 +103,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
 
         const ButtonMore = `
           <button class="more">
-            <img src="/assets/minus.svg">
+            <img src="/assets/plus.svg">
           </button>
         `;
 
