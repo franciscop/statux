@@ -78,7 +78,8 @@ const showSection = (section, forceTrue) => {
   if (!section.is) section = $(section);
   if (!section.is("section")) section = section.closest("section");
   const isActive = section.hasClass("active");
-  section.toggleClass("active", forceTrue || !isActive);
+  if (isActive && forceTrue) return;
+  section.toggleClass("active", !isActive);
   const menu = section.find(".submenu").first();
   const height = isActive ? 0 : menu.scrollHeight;
   if (menu) {
