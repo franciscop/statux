@@ -1,7 +1,7 @@
 ---
 title: Statux - A minimal state management library for React
 url: https://statux.dev/
-github: https://github.com/franciscop/statux
+library: statux
 description: Built with React Hooks, immutable state and some great helpers it makes building your React App a lot easier. Install it and it gets out of the way to allow you to focus on your app.
 ---
 
@@ -10,54 +10,95 @@ description: Built with React Hooks, immutable state and some great helpers it m
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1" />
-    <title>{{layout.title}}</title>
+    <title>{{page.title}}</title>
 
     <!-- Fonts -->
     <link
       href="https://fonts.googleapis.com/css?family=Montserrat:400,600|Source+Code+Pro&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://documentation.page/style.min.css" />
+    <link rel="stylesheet" href="{{layout.url}}/assets/style.css" />
 
-    <link rel="icon" type="image/png" href="{{layout.url}}assets/favicon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{layout.url}}/assets/favicon.png"
+    />
     <meta name="description" content="{{layout.description}}" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="{{layout.url}}" />
+    <meta name="twitter:url" content="{{layout.url}}/" />
     <meta name="twitter:title" content="{{layout.title}}" />
-    <meta name="twitter:image" content="{{layout.url}}assets/hero.png" />
+    <meta name="twitter:image" content="{{layout.url}}/assets/hero.png" />
     <meta name="twitter:description" content="{{layout.description}}" />
 
     <!-- Facebook & others -->
     <meta property="og:title" content="{{layout.title}}" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{layout.url}}" />
-    <meta property="og:image" content="{{layout.url}}assets/hero.png" />
+    <meta property="og:url" content="{{layout.url}}/" />
+    <meta property="og:image" content="{{layout.url}}/assets/hero.png" />
     <meta property="og:description" content="{{layout.description}}" />
   </head>
-  <body>
-    {% if layout.github %}
-    <a
-      class="github"
-      href="{{layout.github}}"
-      target="_blank"
-      rel="noopener"
-    ></a>
-    {% endif %}
-    <div class="flex">
-      <div>
-        <div class="wrap">
-          <aside></aside>
-        </div>
-      </div>
-      <div id="top">
-        <main>
-          {{content}}
-        </main>
-      </div>
-    </div>
+  <body id="top">
+    <nav>
+      <a href="/" class="brand">
+        <img class="logo" src="/assets/favicon.png" alt="" />
+        <span>Form Mate</span>
+      </a>
 
-    <script src="https://documentation.page/script.min.js"></script>
+      <input id="bmenub" type="checkbox" class="show" />
+      <label for="bmenub" class="burger">menu</label>
+
+      <div class="menu">
+        <a href="https://francisco.io/">Author</a>
+        <a href="https://www.paypal.me/franciscopresencia/19">Donate</a>
+        <a href="https://www.npmjs.com/package/{{layout.library}}">npm</a>
+        <a href="https://github.com/franciscop/{{layout.library}}">Github</a>
+      </div>
+    </nav>
+    <main>
+      <div class="flex">
+        <div class="thirty">
+          <aside>
+            <div class="scroller">
+              <section>
+                <h2><a href="#top">Form Mate</a></h2>
+              </section>
+              <form class="search" autocomplete="off">
+                <input name="search" placeholder="Search Documentation" />
+                <div class="results"></div>
+              </form>
+            </div>
+          </aside>
+        </div>
+        <div class="seventy"><article>{{content}}</article></div>
+      </div>
+    </main>
+    <script
+      src="https://unpkg.com/prismjs@1.20.0/prism.js"
+      charset="utf-8"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/umbrellajs"
+      charset="utf-8"
+    ></script>
+    <script type="text/javascript">
+      u("article h2").each(el => {
+        const to = "#" + el.id;
+        const title = u(el).text();
+        u(".scroller").append(`
+                <section>
+                  <h3>
+                    <a href="${to}">
+                      <img src="/assets/file.svg">
+                      ${title}
+                    </a>
+                  </h3>
+                </section>
+              `);
+      });
+    </script>
+    <script src="/assets/script.js"></script>
   </body>
 </html>
