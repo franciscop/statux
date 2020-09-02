@@ -1,4 +1,5 @@
 ---
+name: Statux
 title: Statux - A minimal state management library for React
 url: https://statux.dev/
 library: statux
@@ -44,7 +45,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
     <nav>
       <a href="/" class="brand">
         <img class="logo" src="/assets/favicon.png" alt="" />
-        <span>Form Mate</span>
+        <span>{{layout.name}}</span>
       </a>
 
       <input id="bmenub" type="checkbox" class="show" />
@@ -63,7 +64,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
           <aside>
             <div class="scroller">
               <section>
-                <h2><a href="#top">Form Mate</a></h2>
+                <h2><a href="#top">{{layout.name}}</a></h2>
               </section>
               <form class="search" autocomplete="off">
                 <input name="search" placeholder="Search Documentation" />
@@ -88,15 +89,15 @@ description: Built with React Hooks, immutable state and some great helpers it m
         const to = "#" + el.id;
         const title = u(el).text();
         u(".scroller").append(`
-                <section>
-                  <h3>
-                    <a href="${to}">
-                      <img src="/assets/file.svg">
-                      ${title}
-                    </a>
-                  </h3>
-                </section>
-              `);
+                      <section>
+                        <h3>
+                          <a href="${to}">
+                            <img src="/assets/file.svg">
+                            ${title}
+                          </a>
+                        </h3>
+                      </section>
+                    `);
       });
     </script>
     <script src="/assets/script.js"></script>
