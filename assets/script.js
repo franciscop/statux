@@ -91,6 +91,7 @@ const showSection = (section, forceTrue) => {
 };
 
 if (window.innerWidth > 600) {
+  setTimeout(() => {
     const href = window.location.hash || window.location.pathname;
     const target = u(`a[href="${href}"]`);
     const section = target.closest('section').find('.more').first();
@@ -101,6 +102,7 @@ if (window.innerWidth > 600) {
     } else {
       showSection($(".more").first());
     }
+  }, 600);
 }
 
 $(".more").on("click", (e) => {
