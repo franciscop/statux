@@ -74,11 +74,11 @@ if (u('aside').hasClass('auto')) {
   u('.scroller').append(menus.map(Section).join(''));
 }
 
-const showSection = (section) => {
+const showSection = (section, forceTrue) => {
   if (!section.is) section = $(section);
   if (!section.is("section")) section = section.closest("section");
   const isActive = section.hasClass("active");
-  section.toggleClass("active", !isActive);
+  section.toggleClass("active", forceTrue || !isActive);
   const menu = section.find(".submenu").first();
   const height = isActive ? 0 : menu.scrollHeight;
   if (menu) {
@@ -106,7 +106,7 @@ $(".more").on("click", (e) => {
 $('aside a').on('click', (e) => {
   const more = $(e.currentTarget).siblings('.more').first();
   if (!more) return;
-  showSection(more);
+  showSection(more, true);
 });
 
 // Go to the appropriate part of the page when clicking an internal link
