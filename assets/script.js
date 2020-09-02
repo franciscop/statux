@@ -1,4 +1,3 @@
-// From https://documentation.page/
 const $ = u;
 
 // Remove an incorrect "get" that there was highlighted
@@ -23,6 +22,58 @@ Prism.hooks.add("after-highlight", function (env) {
   });
 });
 
+// Automatically build the Table of Contents if the aside has the class "auto"
+if (u('aside').hasClass('auto')) {
+  const menus = [];
+  u('article h2, article h3').each(el => {
+    const to = "#" + el.id;
+    const title = u('<div />').text(u(el).text()).html();
+    if (u(el).is('h2')) {
+      menus.push({ to, title, sections: [] });
+    } else {
+      if (menus[menus.length - 1]) {
+        menus[menus.length - 1].sections.push({ to, title });
+      } else {
+        console.warn(`Need a h2 above the h3 ${title}`);
+      }
+    }
+  });
+
+  const ButtonMore = `
+    <button class="more">
+      <img src="/assets/plus.svg">
+    </button>
+  `;
+
+  const Submenu = ({ to, title }) => `
+    <div>
+      <a href="${to}">
+        <img src="/assets/file.svg" />
+        ${title}
+      </a>
+    </div>
+  `;
+
+  const Section = ({ to, title, sections }) => `
+    <section>
+      <h3>
+        ${sections.length ? ButtonMore : ''}
+        <a href="${to}">
+          ${sections.length ? '' : '<img src="/assets/file.svg">'}
+          ${title}
+        </a>
+      </h3>
+      ${sections.length ? `
+        <div class="submenu">
+          ${sections.map(Submenu).join('')}
+        </div>
+      ` : ''}
+    </section>
+  `;
+
+  u('.scroller').append(menus.map(Section).join(''));
+}
+
 const showSection = (section) => {
   if (!section.is) section = $(section);
   if (!section.is("section")) section = section.closest("section");
@@ -42,12 +93,20 @@ if (window.innerWidth > 600) {
   if (/^\/documentation\/?$/.test(window.location.pathname)) {
     showSection($(".more").first());
   } else {
-    showSection($(`a[href="${window.location.pathname}"]`));
+    const href = window.location.hash || window.location.pathname;
+    const target = u(`a[href="${href}"]`);
+    showSection(target.closest('section').find('.more').first());
   }
 }
 
 $(".more").on("click", (e) => {
   showSection(e.currentTarget);
+});
+
+$('aside a').on('click', (e) => {
+  const more = $(e.currentTarget).siblings('.more').first();
+  if (!more) return;
+  showSection(more);
 });
 
 // Go to the appropriate part of the page when clicking an internal link

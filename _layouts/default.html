@@ -84,58 +84,6 @@ description: Built with React Hooks, immutable state and some great helpers it m
       src="https://cdn.jsdelivr.net/npm/umbrellajs"
       charset="utf-8"
     ></script>
-    <script type="text/javascript">
-      if (u('aside').hasClass('auto')) {
-        const menus = [];
-        u('article h2, article h3').each(el => {
-          const to = "#" + el.id;
-          const title = u('<div />').text(u(el).text()).html();
-          if (u(el).is('h2')) {
-            menus.push({ to, title, sections: [] });
-          } else {
-            if (menus[menus.length - 1]) {
-              menus[menus.length - 1].sections.push({ to, title });
-            } else {
-              console.warn(`Need a h2 above the h3 ${title}`);
-            }
-          }
-        });
-
-        const ButtonMore = `
-          <button class="more">
-            <img src="/assets/plus.svg">
-          </button>
-        `;
-
-        const Submenu = ({ to, title }) => `
-          <div>
-            <a href="${to}">
-              <img src="/assets/file.svg" />
-              ${title}
-            </a>
-          </div>
-        `;
-
-        const Section = ({ to, title, sections }) => `
-          <section>
-            <h3>
-              ${sections.length ? ButtonMore : ''}
-              <a href="${to}">
-                ${sections.length ? '' : '<img src="/assets/file.svg">'}
-                ${title}
-              </a>
-            </h3>
-            ${sections.length ? `
-              <div class="submenu">
-                ${sections.map(Submenu).join('')}
-              </div>
-            ` : ''}
-          </section>
-        `;
-
-        u('.scroller').append(menus.map(Section).join(''));
-      }
-    </script>
     <script src="/assets/script.js"></script>
   </body>
 </html>
