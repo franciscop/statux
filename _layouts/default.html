@@ -1,8 +1,8 @@
 ---
-name: Statux
-title: Statux - A minimal state management library for React
-url: https://statux.dev/
+title: Statux
 library: statux
+url: https://statux.dev/
+motto: A minimal state management library for React
 description: Built with React Hooks, immutable state and some great helpers it makes building your React App a lot easier. Install it and it gets out of the way to allow you to focus on your app.
 ---
 
@@ -11,7 +11,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1" />
-    <title>{{page.title}}</title>
+    <title>{{layout.title}} - {{layout.motto}}</title>
 
     <!-- Fonts -->
     <link
@@ -30,12 +30,12 @@ description: Built with React Hooks, immutable state and some great helpers it m
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="{{layout.url}}/" />
-    <meta name="twitter:title" content="{{layout.title}}" />
+    <meta name="twitter:title" content="{{layout.title}} - {{layout.motto}}" />
     <meta name="twitter:image" content="{{layout.url}}/assets/hero.png" />
     <meta name="twitter:description" content="{{layout.description}}" />
 
     <!-- Facebook & others -->
-    <meta property="og:title" content="{{layout.title}}" />
+    <meta property="og:title" content="{{layout.title}} - {{layout.motto}}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{layout.url}}/" />
     <meta property="og:image" content="{{layout.url}}/assets/hero.png" />
@@ -45,7 +45,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
     <nav>
       <a href="/" class="brand">
         <img class="logo" src="/assets/favicon.png" alt="" />
-        <span>{{layout.name}}</span>
+        <span>{{layout.title}}</span>
       </a>
 
       <input id="bmenub" type="checkbox" class="show" />
@@ -64,7 +64,7 @@ description: Built with React Hooks, immutable state and some great helpers it m
           <aside class="auto">
             <div class="scroller">
               <section>
-                <h2><a href="/">{{layout.name}}</a></h2>
+                <h2><a href="/">{{layout.title}}</a></h2>
               </section>
               <form class="search" autocomplete="off">
                 <input name="search" placeholder="Search Documentation" />
