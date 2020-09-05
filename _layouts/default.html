@@ -4,6 +4,11 @@ library: statux
 url: https://statux.dev
 motto: The easy state management library for React
 description: Built with React Hooks, immutable state and some great helpers it makes building your React App a lot easier. Install it and it gets out of the way to allow you to focus on your app.
+menu:
+  - Author: https://francisco.io/
+  - Donate: https://www.paypal.me/franciscopresencia/19
+  - npm: https://www.npmjs.com/package/statux
+  - Github: https://github.com/franciscop/statux
 ---
 
 <!DOCTYPE html>
@@ -52,10 +57,8 @@ description: Built with React Hooks, immutable state and some great helpers it m
       <label for="bmenub" class="burger">menu</label>
 
       <div class="menu">
-        <a href="https://francisco.io/">Author</a>
-        <a href="https://www.paypal.me/franciscopresencia/19">Donate</a>
-        <a href="https://www.npmjs.com/package/{{layout.library}}">npm</a>
-        <a href="https://github.com/franciscop/{{layout.library}}">Github</a>
+        {% for item in layout.menu %}<a href="{{item[1]}}">{{item[0]}}</a>{%
+        endfor %}
       </div>
     </nav>
     <main>
