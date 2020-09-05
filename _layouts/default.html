@@ -1,8 +1,7 @@
 ---
-title: Statux
-library: statux
+name: Statux
 url: https://statux.dev
-motto: The easy state management library for React
+title: Statux - The easy state management library for React
 description: Built with React Hooks, immutable state and some great helpers it makes building your React App a lot easier. Install it and it gets out of the way to allow you to focus on your app.
 menu:
   Author: https://francisco.io/
@@ -16,7 +15,6 @@ menu:
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1" />
-    <title>{{layout.title}} - {{layout.motto}}</title>
 
     <!-- Fonts -->
     <link
@@ -25,23 +23,20 @@ menu:
     />
     <link rel="stylesheet" href="https://documentation.page/assets/style.css" />
 
-    <link
-      rel="icon"
-      type="image/png"
-      href="{{layout.url}}/assets/favicon.png"
-    />
+    <title>{{layout.title}}</title>
     <meta name="description" content="{{layout.description}}" />
+    <link rel="icon" type="image/png" href="/assets/favicon.png" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{layout.title}}" />
     <meta name="twitter:url" content="{{layout.url}}/" />
-    <meta name="twitter:title" content="{{layout.title}} - {{layout.motto}}" />
     <meta name="twitter:image" content="{{layout.url}}/assets/hero.png" />
     <meta name="twitter:description" content="{{layout.description}}" />
 
     <!-- Facebook & others -->
-    <meta property="og:title" content="{{layout.title}} - {{layout.motto}}" />
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{layout.title}}" />
     <meta property="og:url" content="{{layout.url}}/" />
     <meta property="og:image" content="{{layout.url}}/assets/hero.png" />
     <meta property="og:description" content="{{layout.description}}" />
@@ -50,7 +45,7 @@ menu:
     <nav>
       <a href="/" class="brand">
         <img class="logo" src="/assets/favicon.png" alt="" />
-        <span>{{layout.title}}</span>
+        <span>{{layout.name}}</span>
       </a>
 
       <input id="bmenub" type="checkbox" class="show" />
@@ -67,7 +62,7 @@ menu:
           <aside class="auto">
             <div class="scroller">
               <section>
-                <h2><a href="/">{{layout.title}}</a></h2>
+                <h2><a href="/">{{layout.name}}</a></h2>
               </section>
               <form class="search" autocomplete="off">
                 <input name="search" placeholder="Search Documentation" />
