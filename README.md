@@ -6,9 +6,7 @@ The easy state management library with [React Hooks](#react-hooks) and [immutabl
 
 It allows you to share state across different components of your WebApp with a simple and clean syntax. This [reduces a lot of boilerplate](#direct-manipulation) so you can focus on the actual app that you are building.
 
-Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions),  [*examples*](#examples).
-
-
+Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()`](#useselector), [`useActions()`](#useactions), [_examples_](#examples).
 
 ## Getting started
 
@@ -18,13 +16,13 @@ First create a React project (try [Create-React-App](https://github.com/facebook
 npm install statux
 ```
 
-Now we are going to initialize our store at the App root level with a couple of initial values:
+Then initialize the store at the App.js level with a couple of initial values:
 
 ```js
 // src/App.js
-import React from 'react';
-import Store from 'statux'; // This library
-import Website from './Website'; // Your code
+import React from "react";
+import Store from "statux"; // This library
+import Website from "./Website"; // Your code
 
 // Initial state is { user: null, books: [] }
 export default () => (
@@ -38,23 +36,17 @@ Finally, use and update these values wherever you want:
 
 ```js
 // src/User.js
-import React from 'react';
-import { useStore } from 'statux';
+import React from "react";
+import { useStore } from "statux";
 
 export default () => {
-  const [user, setUser] = useStore('user');
-  const login = () => setUser({ name: 'Maria' });
+  const [user, setUser] = useStore("user");
+  const login = () => setUser({ name: "Maria" });
   return (
-    <div>
-      Hello {user ? user.name : (
-        <button onClick={login}>Login</button>
-      )}
-    </div>
-  )
+    <div>Hello {user ? user.name : <button onClick={login}>Login</button>}</div>
+  );
 };
 ```
-
-
 
 ## API
 
@@ -65,16 +57,14 @@ There are four pieces exported from the library:
 - [**`useSelector(selector)`**](#useselector): retrieve a specific part of the store state based on the selector or the whole state if none was given.
 - [**`useActions(selector)`**](#useactions): generate actions to modify the state while avoiding mutations. Includes default actions and can be extended.
 
-
-
 ### \<Store>
 
 This should wrap your whole project, ideally in `src/App.js` or similar. You define the structure of all of your state within the `<Store>`:
 
 ```js
 // src/App.js
-import Store from 'statux';
-import Navigation from './Navigation';
+import Store from "statux";
+import Navigation from "./Navigation";
 
 // state = { id: null, friends: [] }
 export default () => (
@@ -88,12 +78,12 @@ When your state starts to grow - but not before - it is recommended to split it 
 
 ```js
 // src/App.js
-import Store from 'statux';
-import Navigation from './Navigation';
+import Store from "statux";
+import Navigation from "./Navigation";
 
 const initialState = {
   id: null,
-  friends: [],
+  friends: []
   // ...
 };
 
@@ -106,20 +96,18 @@ export default () => (
 
 That's all you need to know for creating your state. When your app starts to grow, best-practices of redux like normalizing your state are recommended.
 
-
-
 ### useStore()
 
 This is a [React hook](https://reactjs.org/docs/hooks-overview.html) to handle a state subtree. It accepts **a string selector** and returns an array similar to [React's `useState()`](https://reactjs.org/docs/hooks-state.html):
 
 ```js
-import { useStore } from 'statux';
+import { useStore } from "statux";
 
 export default () => {
-  const [user, setUser] = useStore('user');
+  const [user, setUser] = useStore("user");
   return (
-    <div onClick={e => setUser({ name: 'Maria' })}>
-      {user ? user.name : 'Anonymous'}
+    <div onClick={e => setUser({ name: "Maria" })}>
+      {user ? user.name : "Anonymous"}
     </div>
   );
 };
@@ -128,26 +116,22 @@ export default () => {
 You can access deeper items and properties within your state through the selector:
 
 ```js
-import { useStore } from 'statux';
+import { useStore } from "statux";
 
 export default () => {
   // If `user` is null, this will throw an error
-  const [name = 'Anonymous', setName] = useStore('user.name');
-  return (
-    <div onClick={e => setName('John')}>
-      {name}
-    </div>
-  );
+  const [name = "Anonymous", setName] = useStore("user.name");
+  return <div onClick={e => setName("John")}>{name}</div>;
 };
 ```
 
-It accepts a *string* selector that will find the corresponding state subtree, and also return a modifier for that subtree. `useStore()` behaves as the string selector for `useSelector()` and `useActions()` together:
+It accepts a _string_ selector that will find the corresponding state subtree, and also return a modifier for that subtree. `useStore()` behaves as the string selector for `useSelector()` and `useActions()` together:
 
 ```js
-const [user, setUser] = useStore('user');
+const [user, setUser] = useStore("user");
 // Same as
-const user = useSelector('user');
-const setUser = useActions('user');
+const user = useSelector("user");
+const setUser = useActions("user");
 ```
 
 > Note: useStore() **only** accepts either a string selector or no selector at all; it **does not** accept ~~functions~~ or ~~objects~~ as parameters.
@@ -156,48 +140,50 @@ The first returned parameter is the frozen selected state subtree, and the secon
 
 ```js
 // Plain object to update it
-setUser({ ...user, name: 'Francisco' });
+setUser({ ...user, name: "Francisco" });
 
 // Function that accepts the current user
-setUser(user => ({ ...user, name: 'Francisco' }));
+setUser(user => ({ ...user, name: "Francisco" }));
 
 // Modify only the specified props
-setUser.assign({ name: 'Francisco' });
+setUser.assign({ name: "Francisco" });
 ```
 
 See the details and list of helpers on [the `useActions()` section](#useactions).
-
-
 
 ### useSelector()
 
 This React hook retrieves a frozen (read-only) fragment of the state:
 
 ```js
-import { useSelector } from 'statux';
+import { useSelector } from "statux";
 
 export default () => {
-  const user = useSelector('user');
-  return <div>{user ? user.name : 'Anonymous'}</div>;
+  const user = useSelector("user");
+  return <div>{user ? user.name : "Anonymous"}</div>;
 };
 ```
 
 You can access deeper objects with the dot selector, which works both on objects and array indexes:
 
 ```js
-import { useStore } from 'statux';
+import { useStore } from "statux";
 
 export default () => {
-  const title = useSelector('books.0.title');
-  const name = useSelector('user.name');
-  return <div>{title} - by {name}</div>;
+  const title = useSelector("books.0.title");
+  const name = useSelector("user.name");
+  return (
+    <div>
+      {title} - by {name}
+    </div>
+  );
 };
 ```
 
-It accepts both a *string selector* and a *function selector* to find the state that we want:
+It accepts both a _string selector_ and a _function selector_ to find the state that we want:
 
 ```js
-const user = useSelector('user');
+const user = useSelector("user");
 const user = useSelector(({ user }) => user);
 const user = useSelector(state => state.user);
 ```
@@ -206,16 +192,14 @@ You can dig for nested state, but if any of the intermediate trees is missing th
 
 ```js
 // Requires `user` to be an object
-const name = useSelector('user.name');
+const name = useSelector("user.name");
 
 // Can accept no user at all:
-const user = useSelector(({ user }) => user ? user.name : 'Anonymous');
+const user = useSelector(({ user }) => (user ? user.name : "Anonymous"));
 
 // This will dig the array friends -> 0
-const bestFriend = useSelector('friends.0');
+const bestFriend = useSelector("friends.0");
 ```
-
-
 
 ### useActions()
 
@@ -232,14 +216,14 @@ setName(name => 'San ' + name);
 setName((name, key, state) => { ... });
 ```
 
-These actions must be  executed within the appropriate callback:
+These actions must be executed within the appropriate callback:
 
 ```js
-import { useActions } from 'statux';
-import Form from 'your-form-library';
+import { useActions } from "statux";
+import Form from "your-form-library";
 
 const ChangeName = () => {
-  const setName = useActions('user.name');
+  const setName = useActions("user.name");
   const onSubmit = ({ name }) => setName(name);
   return <Form onSubmit={onSubmit}>...</Form>;
 };
@@ -266,62 +250,60 @@ See them in action:
 
 ```js
 // For the state of: books = ['a', 'b', 'c']
-const { fill, pop, push, ...setBooks } = useActions('books');
+const { fill, pop, push, ...setBooks } = useActions("books");
 
-fill(1);  // [1, 1, 1]
+fill(1); // [1, 1, 1]
 pop(); // ['a', 'b']
-push('d'); // ['a', 'b', 'c', 'd']
+push("d"); // ['a', 'b', 'c', 'd']
 setBooks.reverse(); // ['c', 'b', 'a']
 setBooks.shift(); // ['b', 'c']
 setBooks.sort(); // ['a', 'b', 'c']
-setBooks.splice(1, 1, 'x'); // ['a', 'x', 'c']
-setBooks.unshift('x'); // ['x', 'a', 'b', 'c']
+setBooks.splice(1, 1, "x"); // ['a', 'x', 'c']
+setBooks.unshift("x"); // ['x', 'a', 'b', 'c']
 
 // Aliases
-setBooks.append('x');  // ['a', 'b', 'c', 'x']
-setBooks.prepend('x');  // ['x', 'a', 'b', 'c']
-setBooks.remove(1);  // ['a', 'c']
+setBooks.append("x"); // ['a', 'b', 'c', 'x']
+setBooks.prepend("x"); // ['x', 'a', 'b', 'c']
+setBooks.remove(1); // ['a', 'c']
 
 // These are immutable, but this still helps:
-setBooks.concat('d', 'e');  // ['a', 'b', 'c', 'd', 'e']
-setBooks.slice(1, 1);  // ['b']
+setBooks.concat("d", "e"); // ['a', 'b', 'c', 'd', 'e']
+setBooks.slice(1, 1); // ['b']
 setBooks.filter(item => /^(a|b)$/.test(item)); // ['a', 'b']
-setBooks.map(book => book + '!'); // ['a!', 'b!', 'c!']
-setBooks.reduce((all, book) => [...all, book + 'x'], []); // ['ax', 'bx', 'cx']
+setBooks.map(book => book + "!"); // ['a!', 'b!', 'c!']
+setBooks.reduce((all, book) => [...all, book + "x"], []); // ['ax', 'bx', 'cx']
 setBooks.reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
 
 // For the state of: user = { id: 1, name: 'John' }
-const setUser = useActions('user');
-setUser(user => ({ ...user, name: 'Sarah' }));   // { id: 1, name: 'Sarah' }
+const setUser = useActions("user");
+setUser(user => ({ ...user, name: "Sarah" })); // { id: 1, name: 'Sarah' }
 
-setUser.assign({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
-setUser.extend({ name: 'Sarah' });  // { id: 1, name: 'Sarah' }
-setUser.remove('name');  // { id: 1 }
+setUser.assign({ name: "Sarah" }); // { id: 1, name: 'Sarah' }
+setUser.extend({ name: "Sarah" }); // { id: 1, name: 'Sarah' }
+setUser.remove("name"); // { id: 1 }
 ```
 
 These methods can be extracted right in the actions or used as a method:
 
 ```js
 const BookForm = () => {
-  const setBooks = useActions('books');
+  const setBooks = useActions("books");
   const onSubmit = book => setBooks.append(book);
   // OR
-  const { append } = useActions('books');
+  const { append } = useActions("books");
   const onSubmit = book => append(book);
 
   return <Form onSubmit={onSubmit}>...</Form>;
 };
 ```
 
-
-
 ## Examples
 
-Some examples to show how *statux* works. Feel free to [suggest new ones](https://github.com/franciscop/statux/issues/new?template=suggest-example.md).
+Some examples to show how _statux_ works. Feel free to [suggest new ones](https://github.com/franciscop/statux/issues/new?template=suggest-example.md).
 
 ### Todo list
 
-A TODO list in 30 lines ([**see codesandbox]**](https://codesandbox.io/s/elegant-tdd-c8jlq)):
+A TODO list in 30 lines ([**see codesandbox]\*\*](https://codesandbox.io/s/elegant-tdd-c8jlq)):
 
 ![TODO List](./assets/todo.jpg "todo example screenshot")
 
@@ -376,9 +358,9 @@ Load a pokemon list with graphics from an API ([**see codesandbox**](https://cod
 
 ```js
 // src/App.js
-import Store from 'statux';
-import React from 'react';
-import PokemonList from './PokemonList';
+import Store from "statux";
+import React from "react";
+import PokemonList from "./PokemonList";
 
 export default () => (
   <Store pokemon={[]}>
@@ -420,7 +402,6 @@ export default () => {
 };
 ```
 
-
 ### API calls
 
 You already saw how to make initial calls on load [in the previous example]().
@@ -429,15 +410,15 @@ Now let's see how to make API calls to respond to a user action, in this case wh
 
 ```js
 // LoginForm.js
-import React from 'react';
-import { useActions } from 'statux';
-import axios from 'axios';
-import Form from 'form-mate';
+import React from "react";
+import { useActions } from "statux";
+import axios from "axios";
+import Form from "form-mate";
 
 export default () => {
-  const setUser = useActions('user');
+  const setUser = useActions("user");
   const onSubmit = async data => {
-    const { data } = await axios.post('/login', data);
+    const { data } = await axios.post("/login", data);
     setUser(data);
   };
   return (
@@ -447,12 +428,10 @@ export default () => {
       <button>Login</button>
     </Form>
   );
-}
+};
 ```
 
 > The libraries [`axios`](https://www.npmjs.com/package/axios) and [`form-mate`](https://www.npmjs.com/package/form-mate) that we are using here are not needed, but they do make our lifes easier.
-
-
 
 ### With localStorage
 
@@ -463,11 +442,11 @@ import React from "react";
 import Store, { useSelector } from "statux";
 
 // Define the initial state as an object:
-const todo = JSON.parse(localStorage.todo || '[]');
+const todo = JSON.parse(localStorage.todo || "[]");
 
 // Listen for changes on the state and save it in localStorage:
 const LocalStorage = () => {
-  const todo = useSelector('todo');
+  const todo = useSelector("todo");
   localStorage.todo = JSON.stringify(todo);
   return null;
 };
@@ -491,7 +470,7 @@ const dark = localStorage.dark === "true";
 
 // Save this state fragment when it changes:
 const LocalStorage = () => {
-  localStorage.dark = useSelector('dark');
+  localStorage.dark = useSelector("dark");
   return null;
 };
 
@@ -502,8 +481,6 @@ export default () => (
   </Store>
 );
 ```
-
-
 
 ### Reset initial state
 
@@ -542,27 +519,22 @@ export default () => (
 );
 ```
 
-
-
 ## Motivation
 
 Why did I create Statux instead of using useState+useContext() or Redux? I built a library that sits between the simple but local React Hooks and the solid but complex full Flux architecture. There are few reasons that you might care about:
-
 
 ### React Hooks
 
 When there's a major shift on a technology it's a good chance to reevaluate our choices. And React Hooks is no different, our components are now cleaner and the code is easier to reuse than ever.
 
-So I wanted a *minimal* library that follows React Hooks' pattern of accessing and writing state, but on an app-level instead of a component-level. I tried with Context for a while, but found that you have to create many contexts to avoid some issues ([by design](https://github.com/facebook/react/issues/15156#issuecomment-474590693)) and found that too cumbersome. I just wanted `useState`, but globally.
+So I wanted a _minimal_ library that follows React Hooks' pattern of accessing and writing state, but on an app-level instead of a component-level. I tried with Context for a while, but found that you have to create many contexts to avoid some issues ([by design](https://github.com/facebook/react/issues/15156#issuecomment-474590693)) and found that too cumbersome. I just wanted `useState`, but globally.
 
 So here it is, now you can use `useStore()` as a global `useState()`. I've followed Hooks' syntax where possible, with differences only when needed e.g. not initial state on a component-level since that's global:
 
 ```js
-const [user, setUser] = useState(null);  // React Hooks
-const [user, setUser] = useStore('user');  // Statux
+const [user, setUser] = useState(null); // React Hooks
+const [user, setUser] = useStore("user"); // Statux
 ```
-
-
 
 ### Direct manipulation
 
@@ -572,18 +544,16 @@ This removes a lot of boilerplate commonly seen on apps that use Redux. Where ma
 
 ```js
 export default function UserProfile() {
-  const [user, setUser] = useStore('user');
+  const [user, setUser] = useStore("user");
   if (!user) {
-    const login = () => setUser('Mike');
-    return <button onClick={login}>Login</button>
+    const login = () => setUser("Mike");
+    return <button onClick={login}>Login</button>;
   }
   return user;
 }
 ```
 
-This has a disadvantage for very large and complex apps (100+ components) where the coupling of state and actions make changes in the state structure around twice as hard. But if [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you might not really need Redux, so give Statux a try and it *will* simplify your code.
-
-
+This has a disadvantage for very large and complex apps (100+ components) where the coupling of state and actions make changes in the state structure around twice as hard. But if [you are following this Redux antipattern](https://rangle.slides.com/yazanalaboudi/deck) you might not really need Redux, so give Statux a try and it _will_ simplify your code.
 
 ### Truly immutable
 
@@ -593,7 +563,7 @@ The whole state is [frozen with `Object.freeze()`](https://developer.mozilla.org
 const App = () => {
   const [user] = useStore("user");
   // TypeError - can't define property "name"; Object is not extensible
-  user.name = 'John';
+  user.name = "John";
   return <div>{user.name}</div>;
 };
 ```
@@ -608,7 +578,7 @@ When you try to mutate the state directly it will throw a TypeError. Instead, tr
 ```js
 const App = () => {
   const [user] = useStore("user");
-  const name = user.name || 'John';
+  const name = user.name || "John";
   return <div>{name}</div>;
 };
 ```
@@ -617,7 +587,7 @@ Or directly access the name with the correct selector and a default if you know 
 
 ```js
 const App = () => {
-  const [name = 'John'] = useStore("user.name");
+  const [name = "John"] = useStore("user.name");
   return <div>{name}</div>;
 };
 ```
