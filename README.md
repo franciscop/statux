@@ -20,7 +20,6 @@ Then initialize the store at the App.js level with a couple of initial values:
 
 ```js
 // src/App.js
-import React from "react";
 import Store from "statux"; // This library
 import Website from "./Website"; // Your code
 
