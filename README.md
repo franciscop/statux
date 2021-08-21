@@ -35,7 +35,6 @@ Finally, use and update these values wherever you want:
 
 ```js
 // src/User.js
-import React from "react";
 import { useStore } from "statux";
 
 export default () => {
@@ -319,7 +318,6 @@ export default () => (
 ```js
 // TodoList.js
 import { useStore } from "statux";
-import React from "react";
 import Form from "form-mate";
 
 function TodoItem({ index }) {
@@ -358,7 +356,6 @@ Load a pokemon list with graphics from an API ([**see codesandbox**](https://cod
 ```js
 // src/App.js
 import Store from "statux";
-import React from "react";
 import PokemonList from "./PokemonList";
 
 export default () => (
@@ -372,7 +369,7 @@ export default () => (
 ```js
 // src/PokemonList.js
 import { useStore } from "statux";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const url = "https://pokeapi.co/api/v2/pokemon/?limit=151";
@@ -409,7 +406,6 @@ Now let's see how to make API calls to respond to a user action, in this case wh
 
 ```js
 // LoginForm.js
-import React from "react";
 import { useActions } from "statux";
 import axios from "axios";
 import Form from "form-mate";
@@ -437,7 +433,6 @@ export default () => {
 Let's say we want to keep all of our small WebApp state in localStorage, we can do that as well:
 
 ```js
-import React from "react";
 import Store, { useSelector } from "statux";
 
 // Define the initial state as an object:
@@ -461,7 +456,6 @@ export default () => (
 This can be applied to Dark Mode as well, since localStorage is sync we can read it before running any React to avoid flashing a white screen first:
 
 ```js
-import React from "react";
 import Store, { useSelector } from "statux";
 
 // Define the initial state as an object:
@@ -486,7 +480,6 @@ export default () => (
 To reset the initial state we should first keep it separated, and then trigger a reset from the root state ([**see codesandbox**](https://codesandbox.io/s/elastic-haslett-njqjr)):
 
 ```js
-import React from "react";
 import Store, { useActions, useStore } from "statux";
 
 // Define the initial state as an object
