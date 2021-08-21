@@ -6,7 +6,6 @@ import React, {
   useState,
   useRef
 } from "react";
-import { unstable_batchedUpdates } from "react-dom";
 
 // https://github.com/facebook/react/issues/14110#issuecomment-446845886
 export const Context = createContext({});
@@ -183,7 +182,11 @@ export default ({ children, ...initial }) => {
   const subscribe = fn => {
     subs.push(fn);
     // Unsubscribe in the callback
-    return () => subs.splice(subs.findIndex(item => item === fn), 1);
+    return () =>
+      subs.splice(
+        subs.findIndex(item => item === fn),
+        1
+      );
   };
 
   // Update the global, full state. This should trigger a re-render cascade on
@@ -192,14 +195,12 @@ export default ({ children, ...initial }) => {
     const old = state.current;
     // console.log("BEGIN", old, updated);
     state.current = updated;
-    unstable_batchedUpdates(() => {
-      subs
-        .slice()
-        .reverse()
-        .forEach(sub => {
-          sub(old);
-        });
-    });
+    subs
+      .slice()
+      .reverse()
+      .forEach(sub => {
+        sub(old);
+      });
 
     // console.log("DONE", old, updated);
   };

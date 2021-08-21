@@ -1,10 +1,10 @@
 import "babel-polyfill";
 import React from "react";
 import $ from "react-test";
-import delay from "delay";
 
 import Store, { useStore, useSelector } from "../index.js";
 
+const delay = time => new Promise(done => setTimeout(done, time));
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };
 
 const User = ({ onClick = () => {}, onMount = () => {} }) => {
