@@ -1,6 +1,6 @@
 {
   "name": "statux",
-  "version": "1.1.13",
+  "version": "1.2.0",
   "description": "A minimal state management library with React Hooks and immutable state",
   "homepage": "https://statux.dev/",
   "repository": "https://github.com/franciscop/statux.git",
