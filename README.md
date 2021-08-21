@@ -302,7 +302,7 @@ Some examples to show how _statux_ works. Feel free to [suggest new ones](https:
 
 ### Todo list
 
-A TODO list in 30 lines ([**see codesandbox]\*\*](https://codesandbox.io/s/elegant-tdd-c8jlq)):
+A TODO list in 30 lines ([**see codesandbox**]](https://codesandbox.io/s/elegant-tdd-c8jlq)):
 
 ![TODO List](./assets/todo.jpg "todo example screenshot")
 
