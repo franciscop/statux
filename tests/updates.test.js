@@ -4,7 +4,7 @@ import $ from "react-test";
 
 import Store, { useStore, useSelector, useActions } from "../index.js";
 
-const delay = time => new Promise(done => setTimeout(done, time));
+const delay = (time) => new Promise((done) => setTimeout(done, time));
 
 // This extracts the state from the selector with the provided function
 const Reader = ({ query = "count" }) => {
@@ -13,9 +13,9 @@ const Reader = ({ query = "count" }) => {
 };
 
 // A button that triggers the update of the state
-const Button = ({ action = count => count + 1 }) => {
+const Button = ({ action = (count) => count + 1 }) => {
   const setCount = useActions("count");
-  return <button onClick={e => setCount(action)}>Click</button>;
+  return <button onClick={(e) => setCount(action)}>Click</button>;
 };
 
 describe("useStore()", () => {
@@ -23,13 +23,13 @@ describe("useStore()", () => {
     const Counter = ({ query }) => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={e => setCount(count + 1)}>
+        <div onClick={(e) => setCount(count + 1)}>
           <Reader query={query} />
         </div>
       );
     };
 
-    const fn = jest.fn(state => state.count);
+    const fn = jest.fn((state) => state.count);
     const $counter = $(<Store count={0} children={<Counter query={fn} />} />);
     expect($counter.html()).toBe("<div><div>0</div></div>");
 
@@ -41,13 +41,13 @@ describe("useStore()", () => {
     const Counter = ({ query }) => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={e => setCount(count + 1)}>
+        <div onClick={(e) => setCount(count + 1)}>
           {count === 0 ? <Reader query={query} /> : null}
         </div>
       );
     };
 
-    const fn = jest.fn(state => state.count);
+    const fn = jest.fn((state) => state.count);
     const $counter = $(<Store count={0} children={<Counter query={fn} />} />);
     expect($counter.html()).toBe("<div><div>0</div></div>");
 
@@ -66,8 +66,8 @@ describe("useStore()", () => {
       );
     };
 
-    const query = jest.fn(state => state.count);
-    const action = jest.fn(count => count + 1);
+    const query = jest.fn((state) => state.count);
+    const action = jest.fn((count) => count + 1);
     const $counter = $(
       <Store count={0} children={<Counter query={query} action={action} />} />
     );
@@ -83,27 +83,27 @@ describe("useStore()", () => {
     const init = [
       { id: 0, text: "abc" },
       { id: 1, text: "def" },
-      { id: 2, text: "ghi" }
+      { id: 2, text: "ghi" },
     ];
     const DeleteItem = () => {
       const [todo, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
-        setTodo(todo => todo.filter(it => it.id !== 1));
+        setTodo((todo) => todo.filter((it) => it.id !== 1));
       };
       return <button onClick={onClick}>Delete</button>;
     };
     const TodoItem = ({ id }) => {
       const text = useSelector(
-        state => state.todo.find(it => it.id === id).text
+        (state) => state.todo.find((it) => it.id === id).text
       );
       return <li>{text}</li>;
     };
     const TodoList = () => {
-      const todos = useSelector(state => state.todo.map(it => it.id));
+      const todos = useSelector((state) => state.todo.map((it) => it.id));
       return (
         <ul>
-          {todos.map(id => (
+          {todos.map((id) => (
             <TodoItem key={id} id={id} />
           ))}
         </ul>
@@ -121,7 +121,7 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>"
     );
     await $todo.find("button").click();
-    await delay(200);
+    await $todo.delay(200);
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 
@@ -129,27 +129,27 @@ describe("useStore()", () => {
     const init = [
       { id: 0, text: "abc" },
       { id: 1, text: "def" },
-      { id: 2, text: "ghi" }
+      { id: 2, text: "ghi" },
     ];
     const DeleteItem = memo(() => {
       const [todo, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
-        setTodo(todo => todo.filter(it => it.id !== 1));
+        setTodo((todo) => todo.filter((it) => it.id !== 1));
       };
       return <button onClick={onClick}>Delete</button>;
     });
     const TodoItem = memo(({ id }) => {
       const text = useSelector(
-        state => state.todo.find(it => it.id === id).text
+        (state) => state.todo.find((it) => it.id === id).text
       );
       return <li>{text}</li>;
     });
     const TodoList = memo(() => {
-      const todos = useSelector(state => state.todo.map(it => it.id));
+      const todos = useSelector((state) => state.todo.map((it) => it.id));
       return (
         <ul>
-          {todos.map(id => (
+          {todos.map((id) => (
             <TodoItem key={id} id={id} />
           ))}
         </ul>
@@ -167,7 +167,7 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>"
     );
     await $todo.find("button").click();
-    await delay(200);
+    await $todo.delay(200);
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 });

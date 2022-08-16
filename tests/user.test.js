@@ -4,13 +4,13 @@ import $ from "react-test";
 
 import Store, { useStore, useSelector } from "../index.js";
 
-const delay = time => new Promise(done => setTimeout(done, time));
+const delay = (time) => new Promise((done) => setTimeout(done, time));
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };
 
 const User = ({ onClick = () => {}, onMount = () => {} }) => {
   const [user, setUser] = useStore("user");
   return (
-    <div onClick={e => onClick(user, setUser)}>{JSON.stringify(user)}</div>
+    <div onClick={(e) => onClick(user, setUser)}>{JSON.stringify(user)}</div>
   );
 };
 
@@ -24,7 +24,7 @@ describe("User", () => {
     expect($user.html()).toEqual("<div>{}</div>");
   });
 
-  it.only("can set the name", async () => {
+  it("can set the name", async () => {
     const user = {};
     const onClick = (user, setUser) => setUser({ name: "John" });
     const $user = $(<App user={user} onClick={onClick} />);
@@ -37,7 +37,7 @@ describe("User", () => {
   it("can set the name with a callback", async () => {
     const user = { id: 1 };
     const onClick = (_, setUser) => {
-      setUser(user => ({ ...user, name: "John" }));
+      setUser((user) => ({ ...user, name: "John" }));
     };
     const $user = $(<App user={user} onClick={onClick} />);
     expect($user.html()).toEqual(`<div>{"id":1}</div>`);
@@ -81,7 +81,7 @@ describe("User", () => {
       let i = 0;
       const SetName = ({ children }) => {
         const [name, setName] = useStore("user.name");
-        return <div onClick={e => setName("test")}>{children}</div>;
+        return <div onClick={(e) => setName("test")}>{children}</div>;
       };
       const UserName = ({ onClick = () => {}, onMount = () => {} }) => {
         const name = useSelector("user.name");
