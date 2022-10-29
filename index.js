@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
   useState,
-  useRef
+  useRef,
 } from "react";
 
 // https://github.com/facebook/react/issues/14110#issuecomment-446845886
@@ -16,7 +16,15 @@ const { Provider } = Context;
 const dotGet = (obj, sel) => {
   if (!sel) return obj;
   if (typeof sel === "function") return sel(obj);
-  return sel.split(".").reduce((obj, i) => obj[i], obj);
+  let keys = [];
+  return sel.split(".").reduce((obj, key) => {
+    if (!obj) {
+      const k = keys.join(".");
+      throw new Error(`Cannot read '${k}.${key}' since '${k}' is '${obj}'`);
+    }
+    keys.push(key);
+    return obj[key];
+  }, obj);
 };
 
 const dotSet = (obj, sel, value) => {
@@ -32,7 +40,7 @@ const dotSet = (obj, sel, value) => {
 };
 
 // Deep freeze any object
-const freeze = obj => {
+const freeze = (obj) => {
   // Does not need freezing
   if (typeof obj !== "object") return obj;
 
@@ -62,7 +70,7 @@ const createActions = (stateRef, sel, setState) => {
   const state = dotGet(stateRef.current, sel);
 
   // Generic one `setUser('Francisco')` - parses the multi-type value
-  const setter = value => {
+  const setter = (value) => {
     const state = dotGet(stateRef.current, sel);
     while (typeof value === "function") {
       value = value(freeze(state));
@@ -72,8 +80,8 @@ const createActions = (stateRef, sel, setState) => {
 
   if (Array.isArray(state)) {
     // Create a swallow clone of the array so that it can be mutated in place
-    const mutate = mutation => {
-      setter(prev => {
+    const mutate = (mutation) => {
+      setter((prev) => {
         const cloned = prev.slice();
         mutation(cloned);
         return cloned;
@@ -85,29 +93,30 @@ const createActions = (stateRef, sel, setState) => {
     // we want to set it to the mutated array, and then return the result of
     // the operation. See the mutate() method above
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Mutator_methods
-    setter.fill = (...args) => mutate(prev => prev.fill(...args));
-    setter.pop = (...args) => mutate(prev => prev.pop(...args));
-    setter.push = (...args) => mutate(prev => prev.push(...args));
-    setter.reverse = (...args) => mutate(prev => prev.reverse(...args));
-    setter.shift = (...args) => mutate(prev => prev.shift(...args));
-    setter.sort = (...args) => mutate(prev => prev.sort(...args));
-    setter.splice = (...args) => mutate(prev => prev.splice(...args));
-    setter.unshift = (...args) => mutate(prev => prev.unshift(...args));
+    setter.fill = (...args) => mutate((prev) => prev.fill(...args));
+    setter.pop = (...args) => mutate((prev) => prev.pop(...args));
+    setter.push = (...args) => mutate((prev) => prev.push(...args));
+    setter.reverse = (...args) => mutate((prev) => prev.reverse(...args));
+    setter.shift = (...args) => mutate((prev) => prev.shift(...args));
+    setter.sort = (...args) => mutate((prev) => prev.sort(...args));
+    setter.splice = (...args) => mutate((prev) => prev.splice(...args));
+    setter.unshift = (...args) => mutate((prev) => prev.unshift(...args));
 
     // Change the array in some immutable way. Helpers to make it easier
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Accessor_methods
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype#Iteration_methods
-    setter.concat = (...args) => setter(prev => prev.concat(...args));
-    setter.slice = (...args) => setter(prev => prev.slice(...args));
-    setter.filter = (...args) => setter(prev => prev.filter(...args));
-    setter.map = (...args) => setter(prev => prev.map(...args));
-    setter.reduce = (...args) => setter(prev => prev.reduce(...args));
-    setter.reduceRight = (...args) => setter(prev => prev.reduceRight(...args));
+    setter.concat = (...args) => setter((prev) => prev.concat(...args));
+    setter.slice = (...args) => setter((prev) => prev.slice(...args));
+    setter.filter = (...args) => setter((prev) => prev.filter(...args));
+    setter.map = (...args) => setter((prev) => prev.map(...args));
+    setter.reduce = (...args) => setter((prev) => prev.reduce(...args));
+    setter.reduceRight = (...args) =>
+      setter((prev) => prev.reduceRight(...args));
 
     // Aliases
     setter.append = setter.push;
     setter.prepend = setter.unshift;
-    setter.remove = index => setter.splice(Number(index), 1);
+    setter.remove = (index) => setter.splice(Number(index), 1);
   } else if (typeof state === "object") {
     setter.assign = (...args) => setter(Object.assign({}, state, ...args));
     setter.remove = (...args) => setter(exclude(state, args));
@@ -117,7 +126,7 @@ const createActions = (stateRef, sel, setState) => {
   }
 
   // Numbers
-  setter.add = num => setter(prev => prev + num);
+  setter.add = (num) => setter((prev) => prev + num);
 
   return setter;
 };
@@ -125,7 +134,7 @@ const createActions = (stateRef, sel, setState) => {
 // Rerender whatever is listening when there's a change in the state fragment
 // derived from the selector, which might happen because of a state change or
 // because of a selector change
-export const useSelector = (sel = state => state) => {
+export const useSelector = (sel = (state) => state) => {
   const { state, subscribe } = useContext(Context);
 
   // By using a function, we only trigger dotGet() on the first render,
@@ -133,18 +142,21 @@ export const useSelector = (sel = state => state) => {
   // const [local, setLocal] = useState(() => dotGet(state.current, sel));
   // console.log("Local:", local, sel, state.current);
 
-  const local = useRef();
-  local.current = dotGet(state.current, sel);
+  // const local = useRef();
+  // local.current = ;
   const [, forceUpdate] = useState();
 
   useEffect(() => {
     // The unsubscribe() is the returned value
-    return subscribe(old => {
+    return subscribe((old) => {
       try {
-        const fragment = dotGet(state.current, sel);
+        // const fragment = dotGet(state.current, sel);
         // console.log("Subscription", sel.toString());
         // console.log("Update:", old, "->", state.current);
-        if (local.current === fragment) return;
+        if (dotGet(old, sel) === dotGet(state.current, sel)) return;
+        // Need to empty catch because some times the child will do a render
+        // before the parent has removed that child, having invalid state and
+        // throwing: https://kaihao.dev/posts/Stale-props-and-zombie-children-in-Redux
       } catch (error) {}
       forceUpdate({});
     });
@@ -152,24 +164,24 @@ export const useSelector = (sel = state => state) => {
 
   // console.log("Updated!");
 
-  return freeze(local.current);
+  return freeze(dotGet(state.current, sel));
 };
 
-export const useActions = sel => {
+export const useActions = (sel) => {
   useSelector(sel);
   const { state, setState } = useContext(Context);
   // console.log("useActions", sel, state);
-  const callback = createActions(state, sel, value => {
+  const callback = createActions(state, sel, (value) => {
     setState(dotSet(state.current, sel, value));
   });
   return useCallback(callback, [sel]);
 };
 
-export const useStore = sel => {
+export const useStore = (sel) => {
   const { state, setState } = useContext(Context);
   const slice = useSelector(sel);
   // console.log("useStore", sel, state, slice);
-  const callback = createActions(state, sel, value => {
+  const callback = createActions(state, sel, (value) => {
     setState(dotSet(state.current, sel, value));
   });
   const setter = useCallback(callback, [sel]);
@@ -179,26 +191,26 @@ export const useStore = sel => {
 export default ({ children, ...initial }) => {
   const state = useRef(initial);
   const subs = [];
-  const subscribe = fn => {
+  const subscribe = (fn) => {
     subs.push(fn);
     // Unsubscribe in the callback
     return () =>
       subs.splice(
-        subs.findIndex(item => item === fn),
+        subs.findIndex((item) => item === fn),
         1
       );
   };
 
   // Update the global, full state. This should trigger a re-render cascade on
   // all the subscriptions that are active
-  const setState = updated => {
+  const setState = (updated) => {
     const old = state.current;
     // console.log("BEGIN", old, updated);
     state.current = updated;
     subs
       .slice()
       .reverse()
-      .forEach(sub => {
+      .forEach((sub) => {
         sub(old);
       });
 

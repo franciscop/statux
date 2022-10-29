@@ -2,7 +2,7 @@ import "babel-polyfill";
 import React from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector } from "../index.js";
+import Store, { useStore } from "../index.js";
 
 const baseUser = { id: 1, name: "John", friends: [{ id: 2, name: "Maria" }] };
 
@@ -10,7 +10,7 @@ const User = ({ onClick, onError }) => {
   const [user, setUser] = useStore("user");
   return (
     <div
-      onClick={e => {
+      onClick={(e) => {
         try {
           onClick(user);
         } catch (error) {
@@ -25,7 +25,7 @@ const User = ({ onClick, onError }) => {
 
 const mutate = async (user, onClick) => {
   let error;
-  const onError = err => (error = err);
+  const onError = (err) => (error = err);
   const $user = $(
     <Store user={baseUser}>
       <User onClick={onClick} onError={onError} />
@@ -37,7 +37,7 @@ const mutate = async (user, onClick) => {
 
 describe("Disable mutations", () => {
   it("throws when trying to change the id", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       user.id = 2;
     });
     expect(error).toBeTruthy();
@@ -47,7 +47,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to change the name", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       user.name += "-san";
     });
     expect(error).toBeTruthy();
@@ -57,7 +57,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to remove a property", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       delete user.name;
     });
     expect(error).toBeTruthy();
@@ -67,7 +67,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to add a property", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       user.age = 20;
     });
     expect(error).toBeTruthy();
@@ -77,7 +77,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to mutate deeply", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       user.friends[0].name = "Marta";
     });
     expect(error).toBeTruthy();
@@ -87,7 +87,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to append deeply", async () => {
-    const error = await mutate(baseUser, user => {
+    const error = await mutate(baseUser, (user) => {
       user.friends.push({ id: 3, name: "Peter" });
     });
     expect(error).toBeTruthy();
@@ -99,7 +99,7 @@ describe("Disable mutations", () => {
   it("stays frozen after an iteration", async () => {
     const User = ({ onError }) => {
       const [user, setUser] = useStore("user");
-      const onClick = e => {
+      const onClick = (e) => {
         try {
           if (user.name === "John") {
             return setUser({ id: 1, name: "Mark" });
@@ -116,7 +116,7 @@ describe("Disable mutations", () => {
       let error;
       const $user = $(
         <Store user={{ name: "John" }}>
-          <User onError={err => (error = err)} />
+          <User onError={(err) => (error = err)} />
         </Store>
       );
       await $user.click();
