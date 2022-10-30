@@ -19,7 +19,9 @@ const List = ({ onClick = () => {}, onMount = () => {} }) => {
   useEffect(() => {
     onMount(items, setItems);
   }, []);
-  return <DisplayList items={items} onClick={e => onClick(items, setItems)} />;
+  return (
+    <DisplayList items={items} onClick={(e) => onClick(items, setItems)} />
+  );
 };
 
 const App = ({ items = [], children, ...props }) => (
@@ -65,7 +67,7 @@ describe("List", () => {
     const List = () => {
       const items = useSelector("items");
       const [item, setItem] = useStore("items.0");
-      const onClick = e => setItem(3);
+      const onClick = (e) => setItem(3);
       return <DisplayList items={items} onClick={onClick} />;
     };
     const $list = $(<Store items={[0, 1, 2]} children={<List />} />);
@@ -79,15 +81,18 @@ describe("List", () => {
     const List = () => {
       const items = useSelector("items");
       const [item, setItem] = useStore("items.0");
-      const onClick = e => setItem(item => ({ ...item, text: "x" }));
+      const onClick = (e) => setItem((item) => ({ ...item, text: "x" }));
       return (
         <DisplayList
-          items={items.map(it => `${it.id}-${it.text}`)}
+          items={items.map((it) => `${it.id}-${it.text}`)}
           onClick={onClick}
         />
       );
     };
-    const items = [{ id: 1, text: "a" }, { id: 2, text: "b" }];
+    const items = [
+      { id: 1, text: "a" },
+      { id: 2, text: "b" },
+    ];
     const $list = $(<Store items={items} children={<List />} />);
     expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li></ul>`);
     await $list.click();
@@ -99,7 +104,7 @@ describe("List", () => {
       const items = useSelector("items");
       return (
         <DisplayList
-          items={items.map(it => `${it.id}-${it.text}`)}
+          items={items.map((it) => `${it.id}-${it.text}`)}
           onClick={onClick}
         />
       );
@@ -109,8 +114,8 @@ describe("List", () => {
     const all = [];
     const List = () => {
       const setItems = useActions("items");
-      const onClick = e => {
-        setItems(items => {
+      const onClick = (e) => {
+        setItems((items) => {
           all.push(items);
           return [...items, { id: items.length + 1, text: "b" }];
         });
@@ -126,7 +131,10 @@ describe("List", () => {
     expect($list.html()).toBe(`<ul><li>1-a</li><li>2-b</li><li>3-b</li></ul>`);
     expect(all).toEqual([
       [{ id: 1, text: "a" }],
-      [{ id: 1, text: "a" }, { id: 2, text: "b" }]
+      [
+        { id: 1, text: "a" },
+        { id: 2, text: "b" },
+      ],
     ]);
   });
 
@@ -138,7 +146,7 @@ describe("List", () => {
       const [items, setItems] = useStore("items");
       const [item, setItem] = useStore(`items.${items.length - 1}`);
       all.push(item);
-      const onClick = e => setItems.append("i" + items.length);
+      const onClick = (e) => setItems.append("i" + items.length);
       return <DisplayList items={items} onClick={onClick} />;
     };
     const items = ["i0"];
@@ -161,7 +169,7 @@ describe("List", () => {
       const [items, setItems] = useStore("items");
       const [item, setItem] = useStore(`items.${items.length - 1}`);
       all.push(item);
-      const onClick = e => {
+      const onClick = (e) => {
         if (item) setItem("x" + items.length);
         setItems.append("i" + items.length);
       };
@@ -344,7 +352,7 @@ describe("List", () => {
   describe("array iterators", () => {
     it(".filter() - remove all items that do not pass the test", async () => {
       const items = ["a", "b", "c"];
-      const test = item => /^(a|b)$/.test(item);
+      const test = (item) => /^(a|b)$/.test(item);
       const filter = (items, setItems) => setItems.filter(test);
       const $list = $(<App items={items} onClick={filter} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
@@ -354,7 +362,7 @@ describe("List", () => {
 
     it(".map() - change each value", async () => {
       const items = ["a", "b", "c"];
-      const map = (items, setItems) => setItems.map(item => item + "x");
+      const map = (items, setItems) => setItems.map((item) => item + "x");
       const $list = $(<App items={items} onClick={map} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
