@@ -2,7 +2,7 @@ import "babel-polyfill";
 import React from "react";
 import $ from "react-test";
 
-import Store, { useStore } from "../index.js";
+import Store, { useStore } from "./";
 
 const baseUser = { id: 1, name: "John", friends: [{ id: 2, name: "Maria" }] };
 

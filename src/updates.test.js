@@ -2,7 +2,7 @@ import "babel-polyfill";
 import React, { memo } from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector, useActions } from "../index.js";
+import Store, { useStore, useSelector, useActions } from "./";
 
 const delay = (time) => new Promise((done) => setTimeout(done, time));
 

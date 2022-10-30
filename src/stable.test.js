@@ -1,8 +1,8 @@
 import "babel-polyfill";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector, useActions } from "../index.js";
+import Store, { useStore, useActions } from "./";
 
 describe("is stable", () => {
   it("the root is stable", async () => {
