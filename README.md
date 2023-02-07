@@ -81,7 +81,7 @@ import Navigation from "./Navigation";
 
 const initialState = {
   id: null,
-  friends: []
+  friends: [],
   // ...
 };
 
@@ -104,7 +104,7 @@ import { useStore } from "statux";
 export default () => {
   const [user, setUser] = useStore("user");
   return (
-    <div onClick={e => setUser({ name: "Maria" })}>
+    <div onClick={(e) => setUser({ name: "Maria" })}>
       {user ? user.name : "Anonymous"}
     </div>
   );
@@ -119,7 +119,7 @@ import { useStore } from "statux";
 export default () => {
   // If `user` is null, this will throw an error
   const [name = "Anonymous", setName] = useStore("user.name");
-  return <div onClick={e => setName("John")}>{name}</div>;
+  return <div onClick={(e) => setName("John")}>{name}</div>;
 };
 ```
 
@@ -141,7 +141,7 @@ The first returned parameter is the frozen selected state subtree, and the secon
 setUser({ ...user, name: "Francisco" });
 
 // Function that accepts the current user
-setUser(user => ({ ...user, name: "Francisco" }));
+setUser((user) => ({ ...user, name: "Francisco" }));
 
 // Modify only the specified props
 setUser.assign({ name: "Francisco" });
@@ -183,7 +183,7 @@ It accepts both a _string selector_ and a _function selector_ to find the state 
 ```js
 const user = useSelector("user");
 const user = useSelector(({ user }) => user);
-const user = useSelector(state => state.user);
+const user = useSelector((state) => state.user);
 ```
 
 You can dig for nested state, but if any of the intermediate trees is missing then it will fail:
@@ -267,14 +267,14 @@ setBooks.remove(1); // ['a', 'c']
 // These are immutable, but this still helps:
 setBooks.concat("d", "e"); // ['a', 'b', 'c', 'd', 'e']
 setBooks.slice(1, 1); // ['b']
-setBooks.filter(item => /^(a|b)$/.test(item)); // ['a', 'b']
-setBooks.map(book => book + "!"); // ['a!', 'b!', 'c!']
+setBooks.filter((item) => /^(a|b)$/.test(item)); // ['a', 'b']
+setBooks.map((book) => book + "!"); // ['a!', 'b!', 'c!']
 setBooks.reduce((all, book) => [...all, book + "x"], []); // ['ax', 'bx', 'cx']
 setBooks.reduceRight((all, book) => [...all, book], []); // ['c', 'b', 'a']
 
 // For the state of: user = { id: 1, name: 'John' }
 const setUser = useActions("user");
-setUser(user => ({ ...user, name: "Sarah" })); // { id: 1, name: 'Sarah' }
+setUser((user) => ({ ...user, name: "Sarah" })); // { id: 1, name: 'Sarah' }
 
 setUser.assign({ name: "Sarah" }); // { id: 1, name: 'Sarah' }
 setUser.extend({ name: "Sarah" }); // { id: 1, name: 'Sarah' }
@@ -286,10 +286,10 @@ These methods can be extracted right in the actions or used as a method:
 ```js
 const BookForm = () => {
   const setBooks = useActions("books");
-  const onSubmit = book => setBooks.append(book);
+  const onSubmit = (book) => setBooks.append(book);
   // OR
   const { append } = useActions("books");
-  const onSubmit = book => append(book);
+  const onSubmit = (book) => append(book);
 
   return <Form onSubmit={onSubmit}>...</Form>;
 };
@@ -375,26 +375,23 @@ import styled from "styled-components";
 const url = "https://pokeapi.co/api/v2/pokemon/?limit=151";
 const catchAll = () =>
   fetch(url)
-    .then(r => r.json())
-    .then(r => r.results);
+    .then((r) => r.json())
+    .then((r) => r.results);
 
-const Pokemon = ({ id, children }) => <li id={id}>{children}</li>;
+const Pokemon = styled.div`...`;
+const Label = styled.div`...`;
 
 export default () => {
   const [pokemon, setPokemon] = useStore("pokemon");
   useEffect(() => {
     catchAll().then(setPokemon);
-  }, []);
+  }, [setPokemon]);
   if (!pokemon.length) return "Loading...";
-  return (
-    <ul>
-      {pokemon.map((poke, i) => (
-        <li key={i} id={i + 1}>
-          <Label>{poke.name}</Label>
-        </li>
-      ))}
-    </ul>
-  );
+  return pokemon.map((poke, i) => (
+    <Pokemon key={i} id={i + 1}>
+      <Label>{poke.name}</Label>
+    </Pokemon>
+  ));
 };
 ```
 
@@ -412,7 +409,7 @@ import Form from "form-mate";
 
 export default () => {
   const setUser = useActions("user");
-  const onSubmit = async data => {
+  const onSubmit = async (data) => {
     const { data } = await axios.post("/login", data);
     setUser(data);
   };
@@ -588,12 +585,12 @@ Statux also provides some helpers for modifying the state easily:
 
 ```js
 // Set the name of the user
-const onClick = name => setUser({ ...user, name });
-const onClick = name => setUser(user => ({ ...user, name }));
-const onClick = name => setUser.assign({ name });
+const onClick = (name) => setUser({ ...user, name });
+const onClick = (name) => setUser((user) => ({ ...user, name }));
+const onClick = (name) => setUser.assign({ name });
 
 // Add a book to the list
-const onSubmit = book => setBooks([...books, book]);
-const onSubmit = book => setBooks(books => [...books, book]);
-const onSubmit = book => setBooks.append(book);
+const onSubmit = (book) => setBooks([...books, book]);
+const onSubmit = (book) => setBooks((books) => [...books, book]);
+const onSubmit = (book) => setBooks.append(book);
 ```
