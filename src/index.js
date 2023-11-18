@@ -5,7 +5,10 @@ import React, {
   useEffect,
   useState,
   useRef,
+  useMemo,
 } from "react";
+
+export let store = localStorage;
 
 // https://github.com/facebook/react/issues/14110#issuecomment-446845886
 export const Context = createContext({});
@@ -16,13 +19,11 @@ const { Provider } = Context;
 const dotGet = (obj, sel) => {
   if (!sel) return obj;
   if (typeof sel === "function") return sel(obj);
-  let keys = [];
-  return sel.split(".").reduce((obj, key) => {
+  return sel.split(".").reduce((obj, key, i, keys) => {
     if (!obj) {
-      const k = keys.join(".");
+      const k = keys.slice(0, i).join(".");
       throw new Error(`Cannot read '${k}.${key}' since '${k}' is '${obj}'`);
     }
-    keys.push(key);
     return obj[key];
   }, obj);
 };
@@ -33,8 +34,7 @@ const dotSet = (obj, sel, value) => {
   const subSel = rest.join(".");
   const subValue = subSel ? dotSet(obj[key], subSel, value) : value;
   if (Array.isArray(obj)) {
-    const data = obj.map((item, i) => (i === parseInt(key) ? subValue : item));
-    return data;
+    return obj.map((item, i) => (i === Number(key) ? subValue : item));
   }
   return { ...obj, [key]: subValue };
 };
@@ -66,16 +66,17 @@ const exclude = (obj, keys) => {
 };
 
 // TODO: test all of these methods to ensure there's no stale state in any
-const createActions = (stateRef, sel, setState) => {
-  const state = dotGet(stateRef.current, sel);
+const createActions = (ref, sel, setState) => {
+  const state = dotGet(ref.current, sel);
 
   // Generic one `setUser('Francisco')` - parses the multi-type value
   const setter = (value) => {
-    const state = dotGet(stateRef.current, sel);
+    const state = dotGet(ref.current, sel);
     while (typeof value === "function") {
       value = value(freeze(state));
     }
-    return value && value.then ? value.then(setState) : setState(value);
+    const setState2 = (value) => setState(dotSet(ref.current, sel, value));
+    return value && value.then ? value.then(setState2) : setState2(value);
   };
 
   if (Array.isArray(state)) {
@@ -139,11 +140,6 @@ export const useSelector = (sel = (state) => state) => {
 
   // By using a function, we only trigger dotGet() on the first render,
   // so we avoid calling a potentially expensive operation too often
-  // const [local, setLocal] = useState(() => dotGet(state.current, sel));
-  // console.log("Local:", local, sel, state.current);
-
-  // const local = useRef();
-  // local.current = ;
   const [, forceUpdate] = useState();
 
   useEffect(() => {
@@ -157,38 +153,45 @@ export const useSelector = (sel = (state) => state) => {
         // Need to empty catch because some times the child will do a render
         // before the parent has removed that child, having invalid state and
         // throwing: https://kaihao.dev/posts/Stale-props-and-zombie-children-in-Redux
+        forceUpdate({});
       } catch (error) {}
-      forceUpdate({});
     });
   }, [sel]);
 
-  // console.log("Updated!");
-
-  return freeze(dotGet(state.current, sel));
+  const slice = dotGet(state.current, sel);
+  return useMemo(() => freeze(slice), [slice]);
 };
 
 export const useActions = (sel) => {
   useSelector(sel);
-  const { state, setState } = useContext(Context);
-  // console.log("useActions", sel, state);
-  const callback = createActions(state, sel, (value) => {
-    setState(dotSet(state.current, sel, value));
-  });
+  const { state, setState, persist } = useContext(Context);
+  const callback = createActions(state, sel, setState);
   return useCallback(callback, [sel]);
 };
 
 export const useStore = (sel) => {
-  const { state, setState } = useContext(Context);
   const slice = useSelector(sel);
-  // console.log("useStore", sel, state, slice);
-  const callback = createActions(state, sel, (value) => {
-    setState(dotSet(state.current, sel, value));
-  });
-  const setter = useCallback(callback, [sel]);
-  return [slice, setter];
+  const setter = useActions(sel);
+  return useMemo(() => [slice, setter], [slice, setter]);
+};
+
+const Listener = ({ id }) => {
+  const value = useSelector(id);
+  useEffect(() => {
+    store[id] = JSON.stringify(value);
+  }, [value]);
+  return null;
 };
 
 export default ({ children, ...initial }) => {
+  const persist = Object.keys(initial)
+    .filter((k) => k.startsWith("$"))
+    .map((k) => {
+      const id = k.slice(1);
+      delete initial[key];
+      initial[id] = store[id] ? JSON.parse(store[id]) : raw[id];
+      return id;
+    });
   const state = useRef(initial);
   const subs = [];
   const subscribe = (fn) => {
@@ -205,16 +208,16 @@ export default ({ children, ...initial }) => {
   // all the subscriptions that are active
   const setState = (updated) => {
     const old = state.current;
-    // console.log("BEGIN", old, updated);
     state.current = updated;
-    subs
-      .slice()
-      .reverse()
-      .forEach((sub) => {
-        sub(old);
-      });
-
-    // console.log("DONE", old, updated);
+    // Reverse-iterate the array
+    subs.reduceRight((_, sub) => sub(old), null);
   };
-  return <Provider value={{ state, setState, subscribe }}>{children}</Provider>;
+  return (
+    <Provider value={{ state, setState, subscribe }}>
+      {persist.map((id) => (
+        <Listener id={id} />
+      ))}
+      {children}
+    </Provider>
+  );
 };
