@@ -23,6 +23,7 @@
   ],
   "main": "index.min.js",
   "type": "module",
+  "types": "./src/index.d.ts",
   "files": [],
   "devDependencies": {
     "@babel/core": "^7.15.0",

@@ -3,9 +3,9 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
-  useRef,
   useMemo,
+  useRef,
+  useState,
 } from "react";
 
 export let store = localStorage;
@@ -121,13 +121,12 @@ const createActions = (ref, sel, setState) => {
   } else if (typeof state === "object") {
     setter.assign = (...args) => setter(Object.assign({}, state, ...args));
     setter.remove = (...args) => setter(exclude(state, args));
-
-    // Aliases
     setter.extend = setter.assign;
+  } else if (typeof state === "number") {
+    // Numbers
+    setter.add = (num) => setter((prev) => prev + num);
+    setter.substract = (num) => setter((prev) => prev - num);
   }
-
-  // Numbers
-  setter.add = (num) => setter((prev) => prev + num);
 
   return setter;
 };
@@ -164,7 +163,7 @@ export const useSelector = (sel = (state) => state) => {
 
 export const useActions = (sel) => {
   useSelector(sel);
-  const { state, setState, persist } = useContext(Context);
+  const { state, setState } = useContext(Context);
   const callback = createActions(state, sel, setState);
   return useCallback(callback, [sel]);
 };

@@ -1,8 +1,9 @@
 import "babel-polyfill";
+
 import React, { useEffect } from "react";
 import $ from "react-test";
 
-import Store, { useActions, useStore, useSelector } from "./";
+import Store, { useActions, useSelector, useStore } from "./";
 
 // The HTML list; we're not testing this, just a helper
 const DisplayList = ({ items, onClick }) => (

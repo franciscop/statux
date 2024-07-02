@@ -1,8 +1,9 @@
 import "babel-polyfill";
+
 import React from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector, useActions } from "./";
+import Store, { useActions, useSelector, useStore } from "./";
 
 describe("useStore()", () => {
   // We define and test a counter:

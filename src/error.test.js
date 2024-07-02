@@ -1,8 +1,9 @@
 import "babel-polyfill";
+
 import React from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector } from "./";
+import Store, { useSelector, useStore } from "./";
 
 const withError = (cb) => {
   const onError = jest.fn();

@@ -1,8 +1,9 @@
 import "babel-polyfill";
+
 import React from "react";
 import $ from "react-test";
 
-import Store, { useStore, useSelector } from "./";
+import Store, { useSelector, useStore } from "./";
 
 const delay = (time) => new Promise((done) => setTimeout(done, time));
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };

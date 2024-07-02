@@ -1,4 +1,5 @@
 import "babel-polyfill";
+
 import React from "react";
 import $ from "react-test";
 

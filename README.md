@@ -1,4 +1,4 @@
-# Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg "install badge")](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg "test badge")](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://img.badgesize.io/franciscop/statux/master/index.min.js.svg?compression=gzip "gzip badge")](https://github.com/franciscop/statux/blob/master/index.min.js)
+# Statux [![npm install statux](https://img.shields.io/badge/npm%20install-statux-blue.svg "install badge")](https://www.npmjs.com/package/statux) [![test badge](https://github.com/franciscop/statux/workflows/tests/badge.svg "test badge")](https://github.com/franciscop/statux/blob/master/.github/workflows/tests.yml) [![gzip size](https://badgen.net/bundlephobia/minzip/statux?label=gzip&color=green "gzip badge")](https://github.com/franciscop/statux/blob/master/index.min.js)
 
 The easy state management library with [React Hooks](#react-hooks) and [immutable state](#truly-immutable):
 
