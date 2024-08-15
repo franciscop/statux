@@ -187,8 +187,8 @@ export default ({ children, ...initial }) => {
     .filter((k) => k.startsWith("$"))
     .map((k) => {
       const id = k.slice(1);
-      delete initial[key];
-      initial[id] = store[id] ? JSON.parse(store[id]) : raw[id];
+      initial[id] = store[id] ? JSON.parse(store[id]) : initial[k];
+      delete initial[k];
       return id;
     });
   const state = useRef(initial);
