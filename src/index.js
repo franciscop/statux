@@ -214,7 +214,7 @@ export default ({ children, ...initial }) => {
   return (
     <Provider value={{ state, setState, subscribe }}>
       {persist.map((id) => (
-        <Listener id={id} />
+        <Listener key={id} id={id} />
       ))}
       {children}
     </Provider>
