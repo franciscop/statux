@@ -1,11 +1,12 @@
-import { useActions, useSelector, useStore } from "..";
+import React from "react";
+import Store, { useActions, useSelector, useStore } from "..";
 
 {
   const [val, setVal] = useStore<string>("root");
   val.substring(0);
   setVal("bye");
   setVal(() => "bye");
-  setVal((a: string) => "bye");
+  setVal((a: string) => a + "bye");
 }
 
 {
@@ -18,6 +19,7 @@ import { useActions, useSelector, useStore } from "..";
   const val6: string = useSelector(() => "hello");
   const val7: string = useSelector<string>(() => "hello");
   const val8: number = useSelector<number>(() => 40);
+  console.log(val1, val2, val3, val4, val5, val6, val7, val8);
 }
 
 {
@@ -32,7 +34,16 @@ import { useActions, useSelector, useStore } from "..";
   const out4: string[] = setValue2.reverse();
   const out5: string[] = setValue2.sort();
   const out6: string[] = setValue2.concat("a", "b");
-
-  const n2: number = useActions<number>("root").add(5);
-  const n3: number = useActions<number>("root").substract(5);
+  console.log(out1, out2, out3, out4, out5, out6);
 }
+
+{
+  const n1: number = useActions<number>("root").add(5);
+  const n2: number = useActions<number>("root").substract(5);
+  console.log(n1, n2);
+}
+
+() => <Store />;
+() => <Store hello="world" />;
+() => <Store hello={null} />;
+() => <Store hello={true} />;

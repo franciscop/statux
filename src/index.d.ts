@@ -22,25 +22,25 @@ declare interface ArraySetter<Value extends unknown[]> {
   slice: (start?: number | undefined, end?: number | undefined) => Value;
   filter: (fn: (value: any, index: number, array: Value) => any) => Value;
   map: (
-    fn: (value: any, index: number, array: Value) => ArrayElement<Value>
+    fn: (value: any, index: number, array: Value) => ArrayElement<Value>,
   ) => Value;
   reduce: (
     fn: (
       previous: Value,
       current: ArrayElement<Value>,
       index: number,
-      array: Value
+      array: Value,
     ) => Value,
-    initial: Value
+    initial: Value,
   ) => Value;
   reduceRight: (
     fn: (
       previous: Value,
       current: ArrayElement<Value>,
       index: number,
-      array: Value
+      array: Value,
     ) => Value,
-    initial: Value
+    initial: Value,
   ) => Value;
   remove: (index: number) => Value;
 }
@@ -66,14 +66,14 @@ declare interface UnknownSetter<Value> {
 type Setter<Value> = Value extends any[]
   ? ArraySetter<Value>
   : Value extends Number
-  ? NumberSetter<Value>
-  : Value extends Object
-  ? ObjectSetter<Value>
-  : UnknownSetter<Value>;
+    ? NumberSetter<Value>
+    : Value extends Object
+      ? ObjectSetter<Value>
+      : UnknownSetter<Value>;
 
 type Selector<Value> = string | ((state: any) => Value);
 
 export declare function useStore<Value>(sel?: string): [Value, Setter<Value>];
 export declare function useSelector<Value>(sel?: Selector<Value>): Value;
 export declare function useActions<Value>(sel?: Selector<Value>): Setter<Value>;
-export default function Store() {}
+export default function Store(props: { [key: string]: any }): any;
