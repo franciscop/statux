@@ -12,7 +12,7 @@
     "build": "rollup -c",
     "size": "echo $(gzip -c index.min.js | wc -c) bytes",
     "start": "jest --watch",
-    "test": "jest --coverage"
+    "test": "jest --coverage && npx check-dts"
   },
   "keywords": [
     "state",
