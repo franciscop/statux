@@ -39,6 +39,7 @@
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
@@ -63,8 +64,5 @@
   },
   "jest": {
     "testEnvironment": "jsdom"
-  },
-  "dependencies": {
-    "@types/node": "^22.9.0"
   }
 }
