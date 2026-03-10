@@ -6,7 +6,7 @@
   "repository": "https://github.com/franciscop/statux.git",
   "bugs": "https://github.com/franciscop/statux/issues",
   "funding": "https://www.paypal.me/franciscopresencia/19",
-  "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
+  "author": "Francisco Presencia <pubalic@francisco.io> (https://francisco.io/)",
   "license": "MIT",
   "scripts": {
     "build": "rollup -c",
@@ -46,6 +46,7 @@
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-test": "^0.20.1",
     "rollup": "^1.32.1",
     "rollup-plugin-babel": "^4.4.0",
