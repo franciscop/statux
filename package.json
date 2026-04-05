@@ -4,16 +4,9 @@
   "description": "A minimal state management library with React Hooks and immutable state",
   "homepage": "https://statux.dev/",
   "repository": "https://github.com/franciscop/statux.git",
-  "bugs": "https://github.com/franciscop/statux/issues",
   "funding": "https://www.paypal.me/franciscopresencia/19",
   "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
   "license": "MIT",
-  "scripts": {
-    "build": "rollup -c",
-    "size": "echo $(gzip -c index.min.js | wc -c) bytes",
-    "start": "jest --watch",
-    "test": "jest --coverage && npx check-dts"
-  },
   "keywords": [
     "state",
     "management",
@@ -21,12 +14,42 @@
     "react",
     "hooks"
   ],
+  "scripts": {
+    "build": "npm run build:library && npm run build:types && npm run build:prettier",
+    "build:library": "vite build && mv dist/index.min.js . && rm -rf dist",
+    "build:types": "dts-bundle-generator --out-file index.d.ts src/index.tsx",
+    "build:prettier": "prettier src *.ts *.json --write",
+    "lint": "tsc",
+    "size": "echo $(gzip -c index.min.js | wc -c) bytes",
+    "start": "vitest",
+    "test": "vitest run --coverage"
+  },
   "main": "index.min.js",
   "type": "module",
-  "types": "./src/index.d.ts",
+  "types": "index.d.ts",
   "files": [
-    "./src/index.d.ts"
+    "index.d.ts"
   ],
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "@types/react": "^18.3.4",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.2",
+    "dts-bundle-generator": "^9.5.1",
+    "esbuild": "^0.27.7",
+    "jsdom": "^29.0.1",
+    "prettier": "^3.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-test": "^0.24.2",
+    "terser": "^5.46.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
   "documentation": {
     "menu": {
       "Author": "https://francisco.io/",
@@ -34,36 +57,5 @@
       "npm": "https://www.npmjs.com/package/statux",
       "Github": "https://github.com/franciscop/statux"
     }
-  },
-  "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "@babel/preset-react": "^7.14.5",
-    "@types/react": "^18.3.12",
-    "babel-loader": "^8.2.2",
-    "babel-polyfill": "^6.26.0",
-    "check-dts": "^0.8.2",
-    "jest": "^28.1.0",
-    "jest-environment-jsdom": "^28.1.0",
-    "react": "^18.3.1",
-    "react-test": "^0.20.1",
-    "rollup": "^1.32.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-terser": "^5.2.0"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ]
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
-  },
-  "dependencies": {
-    "@types/node": "^22.9.0"
   }
 }

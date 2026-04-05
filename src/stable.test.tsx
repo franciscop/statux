@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 import React, { useEffect } from "react";
 import $ from "react-test";
 
@@ -16,7 +14,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setState]);
-      const onClick = async (e) => setState({ count: state.count + 1 });
+      const onClick = async (e: any) => setState({ count: state.count + 1 });
       return <div onClick={onClick}>{state.count}</div>;
     };
 
@@ -40,7 +38,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e) => setCount(count + 1);
+      const onClick = async (e: any) => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -64,7 +62,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e) => setCount(count + 1);
+      const onClick = async (e: any) => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -89,7 +87,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setState]);
-      const onClick = async (e) => setState({ count: count + 1 });
+      const onClick = async (e: any) => setState({ count: count + 1 });
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -114,7 +112,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e) => setCount(count + 1);
+      const onClick = async (e: any) => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -139,7 +137,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e) => setCount(count + 1);
+      const onClick = async (e: any) => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 

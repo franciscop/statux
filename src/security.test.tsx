@@ -1,5 +1,3 @@
-import "babel-polyfill";
-
 import React from "react";
 import $ from "react-test";
 
@@ -7,7 +5,13 @@ import Store, { useStore } from "./";
 
 const baseUser = { id: 1, name: "John", friends: [{ id: 2, name: "Maria" }] };
 
-const User = ({ onClick, onError }) => {
+const User = ({
+  onClick,
+  onError,
+}: {
+  onClick: (user: any) => void;
+  onError: (err: any) => void;
+}) => {
   const [user, setUser] = useStore("user");
   return (
     <div
@@ -24,13 +28,13 @@ const User = ({ onClick, onError }) => {
   );
 };
 
-const mutate = async (user, onClick) => {
-  let error;
-  const onError = (err) => (error = err);
+const mutate = async (user: any, onClick: (user: any) => void) => {
+  let error: any;
+  const onError = (err: any) => (error = err);
   const $user = $(
     <Store user={baseUser}>
       <User onClick={onClick} onError={onError} />
-    </Store>
+    </Store>,
   );
   await $user.click();
   return error;
@@ -74,7 +78,7 @@ describe("Disable mutations", () => {
     expect(error).toBeTruthy();
     expect(error.name).toBe("TypeError");
     expect(error.message).toMatch("Cannot add property");
-    expect(baseUser.age).toBe(undefined);
+    expect((baseUser as any).age).toBe(undefined);
   });
 
   it("throws when trying to mutate deeply", async () => {
@@ -98,9 +102,9 @@ describe("Disable mutations", () => {
   });
 
   it("stays frozen after an iteration", async () => {
-    const User = ({ onError }) => {
+    const User = ({ onError }: { onError: (err: any) => void }) => {
       const [user, setUser] = useStore("user");
-      const onClick = (e) => {
+      const onClick = (e: any) => {
         try {
           if (user.name === "John") {
             return setUser({ id: 1, name: "Mark" });
@@ -114,11 +118,11 @@ describe("Disable mutations", () => {
     };
 
     const catcher = async () => {
-      let error;
+      let error: any;
       const $user = $(
         <Store user={{ name: "John" }}>
           <User onError={(err) => (error = err)} />
-        </Store>
+        </Store>,
       );
       await $user.click();
       await $user.click();

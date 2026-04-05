@@ -1,20 +1,19 @@
-import "babel-polyfill";
-
 import React from "react";
 import $ from "react-test";
 
 import Store, { useSelector, useStore } from "./";
 
-const withError = (cb) => {
-  const onError = jest.fn();
-  const Component = () => {
+const withError = (cb: () => React.ReactElement) => {
+  const onError = vi.fn();
+  const Component = (): React.ReactElement | null => {
     try {
       return cb();
     } catch (error) {
       onError(error);
+      return null;
     }
   };
-  return [onError, Component];
+  return [onError, Component] as const;
 };
 
 describe("Error handling", () => {
@@ -27,7 +26,7 @@ describe("Error handling", () => {
     const app = $(
       <Store user={{ name: "John" }}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).not.toBeCalled();
@@ -43,12 +42,12 @@ describe("Error handling", () => {
     $(
       <Store user={null}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).toBeCalled();
     expect(onError).toBeCalledWith(
-      new Error("Cannot read 'user.name' since 'user' is 'null'")
+      new Error("Cannot read 'user.name' since 'user' is 'null'"),
     );
   });
 
@@ -61,12 +60,12 @@ describe("Error handling", () => {
     $(
       <Store user={null}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).toBeCalled();
     expect(onError).toBeCalledWith(
-      new Error("Cannot read 'user.name' since 'user' is 'null'")
+      new Error("Cannot read 'user.name' since 'user' is 'null'"),
     );
   });
 
@@ -79,7 +78,7 @@ describe("Error handling", () => {
     const app = $(
       <Store users={[{ name: "John" }]}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).not.toBeCalled();
@@ -95,12 +94,12 @@ describe("Error handling", () => {
     $(
       <Store users={[{ name: "John" }]}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).toBeCalled();
     expect(onError).toBeCalledWith(
-      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'")
+      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'"),
     );
   });
 
@@ -113,12 +112,12 @@ describe("Error handling", () => {
     $(
       <Store users={[{ name: "John" }]}>
         <UserName />
-      </Store>
+      </Store>,
     );
 
     expect(onError).toBeCalled();
     expect(onError).toBeCalledWith(
-      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'")
+      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'"),
     );
   });
 });

@@ -1,27 +1,29 @@
-import "babel-polyfill";
-
 import React, { memo } from "react";
 import $ from "react-test";
 
 import Store, { useActions, useSelector, useStore } from "./";
 
-const delay = (time) => new Promise((done) => setTimeout(done, time));
+const delay = (time: number) => new Promise((done) => setTimeout(done, time));
 
 // This extracts the state from the selector with the provided function
-const Reader = ({ query = "count" }) => {
+const Reader = ({ query = "count" }: { query?: any }) => {
   const number = useSelector(query);
   return <div>{number}</div>;
 };
 
 // A button that triggers the update of the state
-const Button = ({ action = (count) => count + 1 }) => {
+const Button = ({
+  action = (count: number) => count + 1,
+}: {
+  action?: any;
+}) => {
   const setCount = useActions("count");
   return <button onClick={(e) => setCount(action)}>Click</button>;
 };
 
 describe("useStore()", () => {
   it("triggers updates from parents", async () => {
-    const Counter = ({ query }) => {
+    const Counter = ({ query }: { query: any }) => {
       const [count, setCount] = useStore("count");
       return (
         <div onClick={(e) => setCount(count + 1)}>
@@ -30,7 +32,7 @@ describe("useStore()", () => {
       );
     };
 
-    const fn = jest.fn((state) => state.count);
+    const fn = vi.fn((state: any) => state.count);
     const $counter = $(<Store count={0} children={<Counter query={fn} />} />);
     expect($counter.html()).toBe("<div><div>0</div></div>");
 
@@ -39,7 +41,7 @@ describe("useStore()", () => {
   });
 
   it("starts the update from the parent so children are skipped", async () => {
-    const Counter = ({ query }) => {
+    const Counter = ({ query }: { query: any }) => {
       const [count, setCount] = useStore("count");
       return (
         <div onClick={(e) => setCount(count + 1)}>
@@ -48,7 +50,7 @@ describe("useStore()", () => {
       );
     };
 
-    const fn = jest.fn((state) => state.count);
+    const fn = vi.fn((state: any) => state.count);
     const $counter = $(<Store count={0} children={<Counter query={fn} />} />);
     expect($counter.html()).toBe("<div><div>0</div></div>");
 
@@ -57,7 +59,7 @@ describe("useStore()", () => {
   });
 
   it("triggers updates from siblings", async () => {
-    const Counter = ({ query, action }) => {
+    const Counter = ({ query, action }: { query: any; action: any }) => {
       const count = useSelector("count");
       return (
         <div>
@@ -67,13 +69,13 @@ describe("useStore()", () => {
       );
     };
 
-    const query = jest.fn((state) => state.count);
-    const action = jest.fn((count) => count + 1);
+    const query = vi.fn((state: any) => state.count);
+    const action = vi.fn((count: any) => count + 1);
     const $counter = $(
-      <Store count={0} children={<Counter query={query} action={action} />} />
+      <Store count={0} children={<Counter query={query} action={action} />} />,
     );
     expect($counter.html()).toBe(
-      "<div><button>Click</button><div>0</div></div>"
+      "<div><button>Click</button><div>0</div></div>",
     );
 
     await $counter.find("button").click();
@@ -90,21 +92,21 @@ describe("useStore()", () => {
       const [todo, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
-        setTodo((todo) => todo.filter((it) => it.id !== 1));
+        setTodo((todo: any[]) => todo.filter((it) => it.id !== 1));
       };
       return <button onClick={onClick}>Delete</button>;
     };
-    const TodoItem = ({ id }) => {
+    const TodoItem = ({ id }: { id: number }) => {
       const text = useSelector(
-        (state) => state.todo.find((it) => it.id === id).text
+        (state) => state.todo.find((it: any) => it.id === id).text,
       );
       return <li>{text}</li>;
     };
     const TodoList = () => {
-      const todos = useSelector((state) => state.todo.map((it) => it.id));
+      const todos = useSelector((state) => state.todo.map((it: any) => it.id));
       return (
         <ul>
-          {todos.map((id) => (
+          {todos.map((id: number) => (
             <TodoItem key={id} id={id} />
           ))}
         </ul>
@@ -116,10 +118,10 @@ describe("useStore()", () => {
           <DeleteItem />
           <TodoList />
         </div>
-      </Store>
+      </Store>,
     );
     expect($todo.find("ul").html()).toBe(
-      "<ul><li>abc</li><li>def</li><li>ghi</li></ul>"
+      "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
     await $todo.delay(200);
@@ -136,21 +138,21 @@ describe("useStore()", () => {
       const [todo, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
-        setTodo((todo) => todo.filter((it) => it.id !== 1));
+        setTodo((todo: any[]) => todo.filter((it) => it.id !== 1));
       };
       return <button onClick={onClick}>Delete</button>;
     });
-    const TodoItem = memo(({ id }) => {
+    const TodoItem = memo(({ id }: { id: number }) => {
       const text = useSelector(
-        (state) => state.todo.find((it) => it.id === id).text
+        (state) => state.todo.find((it: any) => it.id === id).text,
       );
       return <li>{text}</li>;
     });
     const TodoList = memo(() => {
-      const todos = useSelector((state) => state.todo.map((it) => it.id));
+      const todos = useSelector((state) => state.todo.map((it: any) => it.id));
       return (
         <ul>
-          {todos.map((id) => (
+          {todos.map((id: number) => (
             <TodoItem key={id} id={id} />
           ))}
         </ul>
@@ -162,10 +164,10 @@ describe("useStore()", () => {
           <DeleteItem />
           <TodoList />
         </div>
-      </Store>
+      </Store>,
     );
     expect($todo.find("ul").html()).toBe(
-      "<ul><li>abc</li><li>def</li><li>ghi</li></ul>"
+      "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
     await $todo.delay(200);
