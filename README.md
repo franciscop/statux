@@ -10,9 +10,9 @@ Jump to docs for [`<Store>`](#store), [`useStore()`](#usestore), [`useSelector()
 
 ## Getting started
 
-First create a React project (try [Create-React-App](https://github.com/facebook/create-react-app)) and install `statux`:
+First create a React project (try [Vite with React or React-TS](https://vite.dev/guide/)) and install `statux`:
 
-```
+```sh
 npm install statux
 ```
 
@@ -149,6 +149,16 @@ setUser.assign({ name: "Francisco" });
 
 See the details and list of helpers on [the `useActions()` section](#useactions).
 
+The generic type parameter types the selected state subtree:
+
+```ts
+type User = { name: string; age: number };
+
+const [user, setUser] = useStore<User>("user");
+setUser({ name: "Maria", age: 30 });
+setUser((user) => ({ ...user, name: "Francisco" }));
+```
+
 ### useSelector()
 
 This React hook retrieves a frozen (read-only) fragment of the state:
@@ -197,6 +207,14 @@ const user = useSelector(({ user }) => (user ? user.name : "Anonymous"));
 
 // This will dig the array friends -> 0
 const bestFriend = useSelector("friends.0");
+```
+
+Use the generic parameter to type the returned value:
+
+```ts
+const user = useSelector<User>("user");
+const name = useSelector<string>("user.name");
+const books = useSelector<Book[]>("books");
 ```
 
 ### useActions()
@@ -293,6 +311,17 @@ const BookForm = () => {
 
   return <Form onSubmit={onSubmit}>...</Form>;
 };
+```
+
+The generic parameter types the setter and its helpers:
+
+```ts
+const setUser = useActions<User>("user");
+setUser({ name: "Francisco", age: 30 });
+setUser.assign({ name: "Francisco" });
+
+const setBooks = useActions<Book[]>("books");
+setBooks.push({ title: "New book" });
 ```
 
 ## Examples
