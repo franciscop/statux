@@ -3,121 +3,76 @@ import $ from "react-test";
 
 import Store, { useSelector, useStore } from "./";
 
-const withError = (cb: () => React.ReactElement) => {
-  const onError = vi.fn();
-  const Component = (): React.ReactElement | null => {
-    try {
-      return cb();
-    } catch (error) {
-      onError(error);
-      return null;
-    }
-  };
-  return [onError, Component] as const;
-};
-
 describe("Error handling", () => {
-  it("succeeds when the base is defined", async () => {
-    const [onError, UserName] = withError(() => {
-      const name = useSelector("user.name");
-      return <div>{name}</div>;
-    });
-
+  it("succeeds when the base is defined", () => {
+    const UserName = () => <div>{useSelector("user.name")}</div>;
     const app = $(
       <Store user={{ name: "John" }}>
         <UserName />
       </Store>,
     );
-
-    expect(onError).not.toBeCalled();
+    expect(app).not.toHaveError();
     expect(app).toHaveHtml("<div>John</div>");
   });
 
-  it("throws when the base is null with useSelector", async () => {
-    const [onError, UserName] = withError(() => {
-      const name = useSelector("user.name");
-      return <div>{name}</div>;
-    });
-
-    $(
-      <Store user={null}>
-        <UserName />
-      </Store>,
-    );
-
-    expect(onError).toBeCalled();
-    expect(onError).toBeCalledWith(
-      new Error("Cannot read 'user.name' since 'user' is 'null'"),
-    );
+  it("throws when the base is null with useSelector", () => {
+    const UserName = () => <div>{useSelector("user.name")}</div>;
+    expect(
+      $(
+        <Store user={null}>
+          <UserName />
+        </Store>,
+      ),
+    ).toHaveError("Cannot read 'user.name' since 'user' is 'null'");
   });
 
-  it("throws when the base is null with useStore", async () => {
-    const [onError, UserName] = withError(() => {
+  it("throws when the base is null with useStore", () => {
+    const UserName = () => {
       const [name] = useStore("user.name");
       return <div>{name}</div>;
-    });
-
-    $(
-      <Store user={null}>
-        <UserName />
-      </Store>,
-    );
-
-    expect(onError).toBeCalled();
-    expect(onError).toBeCalledWith(
-      new Error("Cannot read 'user.name' since 'user' is 'null'"),
-    );
+    };
+    expect(
+      $(
+        <Store user={null}>
+          <UserName />
+        </Store>,
+      ),
+    ).toHaveError("Cannot read 'user.name' since 'user' is 'null'");
   });
 
-  it("succeeds when there IS an item in the array", async () => {
-    const [onError, UserName] = withError(() => {
-      const name = useSelector("users.0.name");
-      return <div>{name}</div>;
-    });
-
+  it("succeeds when there IS an item in the array", () => {
+    const UserName = () => <div>{useSelector("users.0.name")}</div>;
     const app = $(
       <Store users={[{ name: "John" }]}>
         <UserName />
       </Store>,
     );
-
-    expect(onError).not.toBeCalled();
+    expect(app).not.toHaveError();
     expect(app).toHaveHtml("<div>John</div>");
   });
 
-  it("throws there's no item in the array with useSelector", async () => {
-    const [onError, UserName] = withError(() => {
-      const name = useSelector("users.2.name");
-      return <div>{name}</div>;
-    });
-
-    $(
-      <Store users={[{ name: "John" }]}>
-        <UserName />
-      </Store>,
-    );
-
-    expect(onError).toBeCalled();
-    expect(onError).toBeCalledWith(
-      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'"),
-    );
+  it("throws there's no item in the array with useSelector", () => {
+    const UserName = () => <div>{useSelector("users.2.name")}</div>;
+    expect(
+      $(
+        <Store users={[{ name: "John" }]}>
+          <UserName />
+        </Store>,
+      ),
+    ).toHaveError("Cannot read 'users.2.name' since 'users.2' is 'undefined'");
   });
 
-  it("throws there's no item in the array with useStore", async () => {
-    const [onError, UserName] = withError(() => {
+  it("throws there's no item in the array with useStore", () => {
+    const UserName = () => {
       const [name] = useStore("users.2.name");
       return <div>{name}</div>;
-    });
-
-    $(
-      <Store users={[{ name: "John" }]}>
-        <UserName />
-      </Store>,
-    );
-
-    expect(onError).toBeCalled();
-    expect(onError).toBeCalledWith(
-      new Error("Cannot read 'users.2.name' since 'users.2' is 'undefined'"),
-    );
+    };
+    expect(
+      $(
+        <Store users={[{ name: "John" }]}>
+          <UserName />
+        </Store>,
+      ),
+    ).toHaveError("Cannot read 'users.2.name' since 'users.2' is 'undefined'");
   });
 });
