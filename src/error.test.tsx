@@ -1,4 +1,3 @@
-import React from "react";
 import $ from "react-test";
 
 import Store, { useSelector, useStore } from "./";

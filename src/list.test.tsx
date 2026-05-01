@@ -24,9 +24,7 @@ const List = ({
   useEffect(() => {
     onMount(items, setItems);
   }, []);
-  return (
-    <DisplayList items={items} onClick={(e: any) => onClick(items, setItems)} />
-  );
+  return <DisplayList items={items} onClick={() => onClick(items, setItems)} />;
 };
 
 const App = ({
@@ -79,8 +77,8 @@ describe("List", () => {
     // We define and test a items:
     const List = () => {
       const items = useSelector("items");
-      const [item, setItem] = useStore("items.0");
-      const onClick = (e: any) => setItem(3);
+      const [, setItem] = useStore("items.0");
+      const onClick = () => setItem(3);
       return <DisplayList items={items} onClick={onClick} />;
     };
     const $list = $(<Store items={[0, 1, 2]} children={<List />} />);
@@ -93,9 +91,8 @@ describe("List", () => {
     // We define and test a items:
     const List = () => {
       const items = useSelector("items");
-      const [item, setItem] = useStore("items.0");
-      const onClick = (e: any) =>
-        setItem((item: any) => ({ ...item, text: "x" }));
+      const [, setItem] = useStore("items.0");
+      const onClick = () => setItem((item: any) => ({ ...item, text: "x" }));
       return (
         <DisplayList
           items={items.map((it: any) => `${it.id}-${it.text}`)}
@@ -128,7 +125,7 @@ describe("List", () => {
     const all: any[] = [];
     const List = () => {
       const setItems = useActions("items");
-      const onClick = (e: any) => {
+      const onClick = () => {
         setItems((items: any[]) => {
           all.push(items);
           return [...items, { id: items.length + 1, text: "b" }];
@@ -158,9 +155,9 @@ describe("List", () => {
     // We define and test a items:
     const List = () => {
       const [items, setItems] = useStore<any[]>("items");
-      const [item, setItem] = useStore(`items.${items.length - 1}`);
+      const [item] = useStore(`items.${items.length - 1}`);
       all.push(item);
-      const onClick = (e: any) => setItems.append("i" + items.length);
+      const onClick = () => setItems.append("i" + items.length);
       return <DisplayList items={items} onClick={onClick} />;
     };
     const items = ["i0"];
@@ -183,7 +180,7 @@ describe("List", () => {
       const [items, setItems] = useStore<any[]>("items");
       const [item, setItem] = useStore(`items.${items.length - 1}`);
       all.push(item);
-      const onClick = (e: any) => {
+      const onClick = () => {
         if (item) setItem("x" + items.length);
         setItems.append("i" + items.length);
       };
@@ -205,7 +202,7 @@ describe("List", () => {
     // List from MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/prototype
     it(".fill() - all the items", async () => {
       const items = ["a", "b", "c"];
-      const fill = (items: any[], setItems: any) => setItems.fill(1);
+      const fill = (_: any[], setItems: any) => setItems.fill(1);
       const $list = $(<App items={items} onClick={fill} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -215,7 +212,7 @@ describe("List", () => {
 
     it(".fill() - with start and end", async () => {
       const items = ["a", "b", "c"];
-      const fill = (items: any[], setItems: any) => setItems.fill(1, 1, 2);
+      const fill = (_: any[], setItems: any) => setItems.fill(1, 1, 2);
       const $list = $(<App items={items} onClick={fill} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -225,7 +222,7 @@ describe("List", () => {
 
     it(".pop() - removes an item once", async () => {
       const items = ["a", "b", "c"];
-      const pop = (items: any[], setItems: any) => setItems.pop();
+      const pop = (_: any[], setItems: any) => setItems.pop();
       const $list = $(<App items={items} onClick={pop} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -253,8 +250,7 @@ describe("List", () => {
 
     it(".push() - appends multiple items", async () => {
       const items: any[] = [];
-      const push = (items: any[], setItems: any) =>
-        setItems.push("a", "b", "c");
+      const push = (_: any[], setItems: any) => setItems.push("a", "b", "c");
       const $list = $(<App items={items} onClick={push} />);
       expect($list.html()).toBe(`<ul></ul>`);
       await $list.click();
@@ -264,7 +260,7 @@ describe("List", () => {
 
     it(".reverse() - reverses the array", async () => {
       const items = ["a", "b", "c"];
-      const reverse = (items: any[], setItems: any) => setItems.reverse();
+      const reverse = (_: any[], setItems: any) => setItems.reverse();
       const $list = $(<App items={items} onClick={reverse} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -274,7 +270,7 @@ describe("List", () => {
 
     it(".shift() - removes the first item", async () => {
       const items = ["a", "b", "c"];
-      const shift = (items: any[], setItems: any) => setItems.shift();
+      const shift = (_: any[], setItems: any) => setItems.shift();
       const $list = $(<App items={items} onClick={shift} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -288,7 +284,7 @@ describe("List", () => {
 
     it(".sort() - orders by alphabet", async () => {
       const items = ["c", "b", "a"];
-      const sort = (items: any[], setItems: any) => setItems.sort();
+      const sort = (_: any[], setItems: any) => setItems.sort();
       const $list = $(<App items={items} onClick={sort} />);
       expect($list.html()).toBe(`<ul><li>c</li><li>b</li><li>a</li></ul>`);
       await $list.click();
@@ -298,7 +294,7 @@ describe("List", () => {
 
     it(".sort() - orders by passed callback", async () => {
       const items = [4, 2, 1, 3];
-      const sort = (items: any[], setItems: any) =>
+      const sort = (_: any[], setItems: any) =>
         setItems.sort((a: number, b: number) => a - b);
       const $list = $(<App items={items} onClick={sort} />);
       expect($list.html()).toBe(
@@ -313,8 +309,7 @@ describe("List", () => {
 
     it(".splice() - inserts an item", async () => {
       const items = ["a", "c"];
-      const splice = (items: any[], setItems: any) =>
-        setItems.splice(1, 0, "b");
+      const splice = (_: any[], setItems: any) => setItems.splice(1, 0, "b");
       const $list = $(<App items={items} onClick={splice} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>c</li></ul>`);
       await $list.click();
@@ -324,8 +319,7 @@ describe("List", () => {
 
     it(".splice() - replaces an item", async () => {
       const items = ["a", "a", "c"];
-      const splice = (items: any[], setItems: any) =>
-        setItems.splice(1, 1, "b");
+      const splice = (_: any[], setItems: any) => setItems.splice(1, 1, "b");
       const $list = $(<App items={items} onClick={splice} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>a</li><li>c</li></ul>`);
       await $list.click();
@@ -361,7 +355,7 @@ describe("List", () => {
 
     it(".slice() - cuts up the array in the specified places", async () => {
       const items = ["a", "b", "c"];
-      const slice = (items: any[], setItems: any) => setItems.slice(1, 2);
+      const slice = (_items: any[], setItems: any) => setItems.slice(1, 2);
       const $list = $(<App items={items} onClick={slice} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -373,7 +367,7 @@ describe("List", () => {
     it(".filter() - remove all items that do not pass the test", async () => {
       const items = ["a", "b", "c"];
       const test = (item: string) => /^(a|b)$/.test(item);
-      const filter = (items: any[], setItems: any) => setItems.filter(test);
+      const filter = (_: any[], setItems: any) => setItems.filter(test);
       const $list = $(<App items={items} onClick={filter} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -382,7 +376,7 @@ describe("List", () => {
 
     it(".map() - change each value", async () => {
       const items = ["a", "b", "c"];
-      const map = (items: any[], setItems: any) =>
+      const map = (_: any[], setItems: any) =>
         setItems.map((item: string) => item + "x");
       const $list = $(<App items={items} onClick={map} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
@@ -393,7 +387,7 @@ describe("List", () => {
     it(".reduce() - apply the .reduce() method", async () => {
       const items = ["a", "b", "c"];
       const reducer = (all: string[], book: string) => [...all, book + "x"];
-      const map = (items: any[], setItems: any) => setItems.reduce(reducer, []);
+      const map = (_: any[], setItems: any) => setItems.reduce(reducer, []);
       const $list = $(<App items={items} onClick={map} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();
@@ -403,7 +397,7 @@ describe("List", () => {
     it(".reduceRight() - apply the .reduce() method", async () => {
       const items = ["a", "b", "c"];
       const reducer = (all: string[], book: string) => [...all, book + "x"];
-      const map = (items: any[], setItems: any) =>
+      const map = (_: any[], setItems: any) =>
         setItems.reduceRight(reducer, []);
       const $list = $(<App items={items} onClick={map} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
@@ -437,7 +431,7 @@ describe("List", () => {
 
     it(".remove() - remove an index by its index", async () => {
       const items = ["a", "b", "c"];
-      const remove = (items: any[], setItems: any) => setItems.remove(1);
+      const remove = (_: any[], setItems: any) => setItems.remove(1);
       const $list = $(<App items={items} onClick={remove} />);
       expect($list.html()).toBe(`<ul><li>a</li><li>b</li><li>c</li></ul>`);
       await $list.click();

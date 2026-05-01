@@ -81,7 +81,7 @@ export declare const useStore: <Value = any>(
 ) => [Value, Setter<Value>];
 export interface StoreProps {
   children?: React$1.ReactNode;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 declare const _default: ({
   children,

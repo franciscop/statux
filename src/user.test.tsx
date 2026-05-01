@@ -3,18 +3,10 @@ import $ from "react-test";
 
 import Store, { useSelector, useStore } from "./";
 
-const baseUser = { id: 1, name: "John", friends: ["Maria"] };
-
-const User = ({
-  onClick = () => {},
-  onMount = () => {},
-}: {
-  onClick?: any;
-  onMount?: any;
-}) => {
+const User = ({ onClick = () => {} }: { onClick?: any }) => {
   const [user, setUser] = useStore("user");
   return (
-    <div onClick={(e) => onClick(user, setUser)}>{JSON.stringify(user)}</div>
+    <div onClick={() => onClick(user, setUser)}>{JSON.stringify(user)}</div>
   );
 };
 
@@ -36,7 +28,7 @@ describe("User", () => {
 
   it("can set the name", async () => {
     const user = {};
-    const onClick = (user: any, setUser: any) => setUser({ name: "John" });
+    const onClick = (_: any, setUser: any) => setUser({ name: "John" });
     const $user = $(<App user={user} onClick={onClick} />);
     expect($user.html()).toEqual(`<div>{}</div>`);
     await $user.click();
@@ -70,7 +62,7 @@ describe("User", () => {
   describe("objects", () => {
     it("can assign the name", async () => {
       const user = { id: 1 };
-      const onClick = (user: any, setUser: any) =>
+      const onClick = (_: any, setUser: any) =>
         setUser.assign({ name: "John" });
       const $user = $(<App user={user} onClick={onClick} />);
       expect($user.html()).toEqual(`<div>{"id":1}</div>`);
@@ -81,7 +73,7 @@ describe("User", () => {
 
     it("can remove the name", async () => {
       const user = { id: 1, name: "Martha" };
-      const onClick = (user: any, setUser: any) => setUser.remove("name");
+      const onClick = (_: any, setUser: any) => setUser.remove("name");
       const $user = $(<App user={user} onClick={onClick} />);
       expect($user.html()).toEqual(`<div>{"id":1,"name":"Martha"}</div>`);
       await $user.click();
@@ -92,8 +84,8 @@ describe("User", () => {
     it("should only trigger that prop listener", async () => {
       let i = 0;
       const SetName = ({ children }: { children?: React.ReactNode }) => {
-        const [name, setName] = useStore("user.name");
-        return <div onClick={(e) => setName("test")}>{children}</div>;
+        const [, setName] = useStore("user.name");
+        return <div onClick={() => setName("test")}>{children}</div>;
       };
       const UserName = () => {
         const name = useSelector("user.name");
@@ -124,7 +116,7 @@ describe("User", () => {
 
   it("correctly diffs the state", async () => {
     let i = 0;
-    const SetName = ({ children }: { children?: React.ReactNode }) => {
+    const SetName = () => {
       i++;
       const [name, setName] = useStore("user.name");
       const toggle = () => setName(name === "test" ? "Francisco" : "test");

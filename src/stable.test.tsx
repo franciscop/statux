@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import $ from "react-test";
 
 import Store, { useActions, useStore } from "./";
@@ -14,7 +14,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setState]);
-      const onClick = async (e: any) => setState({ count: state.count + 1 });
+      const onClick = async () => setState({ count: state.count + 1 });
       return <div onClick={onClick}>{state.count}</div>;
     };
 
@@ -38,7 +38,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e: any) => setCount(count + 1);
+      const onClick = async () => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -62,7 +62,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e: any) => setCount(count + 1);
+      const onClick = async () => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -87,7 +87,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setState]);
-      const onClick = async (e: any) => setState({ count: count + 1 });
+      const onClick = async () => setState({ count: count + 1 });
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -112,7 +112,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e: any) => setCount(count + 1);
+      const onClick = async () => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 
@@ -137,7 +137,7 @@ describe("is stable", () => {
       useEffect(() => {
         eff++;
       }, [setCount]);
-      const onClick = async (e: any) => setCount(count + 1);
+      const onClick = async () => setCount(count + 1);
       return <div onClick={onClick}>{count}</div>;
     };
 

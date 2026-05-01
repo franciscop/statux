@@ -1,10 +1,9 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import $, { until } from "react-test";
 
 const delay = (time: number) => new Promise((done) => setTimeout(done, time));
 
 import Store, { useActions, useSelector, useStore } from "./";
-
 
 // This extracts the state from the selector with the provided function
 const Reader = ({ query = "count" }: { query?: any }) => {
@@ -19,7 +18,7 @@ const Button = ({
   action?: any;
 }) => {
   const setCount = useActions("count");
-  return <button onClick={(e) => setCount(action)}>Click</button>;
+  return <button onClick={() => setCount(action)}>Click</button>;
 };
 
 describe("useStore()", () => {
@@ -27,7 +26,7 @@ describe("useStore()", () => {
     const Counter = ({ query }: { query: any }) => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={(e) => setCount(count + 1)}>
+        <div onClick={() => setCount(count + 1)}>
           <Reader query={query} />
         </div>
       );
@@ -45,7 +44,7 @@ describe("useStore()", () => {
     const Counter = ({ query }: { query: any }) => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={(e) => setCount(count + 1)}>
+        <div onClick={() => setCount(count + 1)}>
           {count === 0 ? <Reader query={query} /> : null}
         </div>
       );
@@ -90,7 +89,7 @@ describe("useStore()", () => {
       { id: 2, text: "ghi" },
     ];
     const DeleteItem = () => {
-      const [todo, setTodo] = useStore("todo");
+      const [, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
         setTodo((todo: any[]) => todo.filter((it) => it.id !== 1));
@@ -125,7 +124,9 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
-    await until(() => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>");
+    await until(
+      () => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>",
+    );
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 
@@ -136,7 +137,7 @@ describe("useStore()", () => {
       { id: 2, text: "ghi" },
     ];
     const DeleteItem = memo(() => {
-      const [todo, setTodo] = useStore("todo");
+      const [, setTodo] = useStore("todo");
       const onClick = async () => {
         await delay(100);
         setTodo((todo: any[]) => todo.filter((it) => it.id !== 1));
@@ -171,7 +172,9 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
-    await until(() => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>");
+    await until(
+      () => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>",
+    );
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 });

@@ -1,4 +1,3 @@
-import React from "react";
 import $ from "react-test";
 
 import Store, { useStore } from "./";
@@ -12,10 +11,10 @@ const User = ({
   onClick: (user: any) => void;
   onError: (err: any) => void;
 }) => {
-  const [user, setUser] = useStore("user");
+  const [user] = useStore("user");
   return (
     <div
-      onClick={(e) => {
+      onClick={() => {
         try {
           onClick(user);
         } catch (error) {
@@ -28,7 +27,7 @@ const User = ({
   );
 };
 
-const mutate = async (user: any, onClick: (user: any) => void) => {
+const mutate = async (onClick: (user: any) => void) => {
   let error: any;
   const onError = (err: any) => (error = err);
   const $user = $(
@@ -42,7 +41,7 @@ const mutate = async (user: any, onClick: (user: any) => void) => {
 
 describe("Disable mutations", () => {
   it("throws when trying to change the id", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       user.id = 2;
     });
     expect(error).toBeTruthy();
@@ -52,7 +51,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to change the name", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       user.name += "-san";
     });
     expect(error).toBeTruthy();
@@ -62,7 +61,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to remove a property", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       delete user.name;
     });
     expect(error).toBeTruthy();
@@ -72,7 +71,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to add a property", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       user.age = 20;
     });
     expect(error).toBeTruthy();
@@ -82,7 +81,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to mutate deeply", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       user.friends[0].name = "Marta";
     });
     expect(error).toBeTruthy();
@@ -92,7 +91,7 @@ describe("Disable mutations", () => {
   });
 
   it("throws when trying to append deeply", async () => {
-    const error = await mutate(baseUser, (user) => {
+    const error = await mutate((user) => {
       user.friends.push({ id: 3, name: "Peter" });
     });
     expect(error).toBeTruthy();
@@ -104,7 +103,7 @@ describe("Disable mutations", () => {
   it("stays frozen after an iteration", async () => {
     const User = ({ onError }: { onError: (err: any) => void }) => {
       const [user, setUser] = useStore("user");
-      const onClick = (e: any) => {
+      const onClick = () => {
         try {
           if (user.name === "John") {
             return setUser({ id: 1, name: "Mark" });

@@ -6,7 +6,7 @@ describe("useStore()", () => {
   // We define and test a counter:
   const Counter = () => {
     const [{ count, ...state }, setState] = useStore();
-    const onClick = async (e: any) => setState({ ...state, count: count + 1 });
+    const onClick = async () => setState({ ...state, count: count + 1 });
     return <div onClick={onClick}>{count}</div>;
   };
 
@@ -31,7 +31,7 @@ describe("useStore()", () => {
       const count = useSelector("count");
       const setCount = useActions("count");
       return (
-        <div onClick={(e) => setCount((num: number) => num + 2)}>{count}</div>
+        <div onClick={() => setCount((num: number) => num + 2)}>{count}</div>
       );
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
@@ -46,7 +46,7 @@ describe("useStore()", () => {
       const setCount = useActions("count");
       return (
         <div
-          onClick={(e) => {
+          onClick={() => {
             setCount((num: number) => num + 1);
             setCount((num: number) => num + 1);
           }}
@@ -65,7 +65,7 @@ describe("useStore()", () => {
     const Counter = () => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={(e) => setCount((num: number) => num + 2)}>{count}</div>
+        <div onClick={() => setCount((num: number) => num + 2)}>{count}</div>
       );
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
@@ -78,7 +78,7 @@ describe("useStore()", () => {
     const Counter = () => {
       const [count, setCount] = useStore("count");
       return (
-        <div onClick={(e) => setCount(async (num: number) => num + 2)}>
+        <div onClick={() => setCount(async (num: number) => num + 2)}>
           {count}
         </div>
       );
@@ -92,7 +92,7 @@ describe("useStore()", () => {
   it("can use delayed async with a callback", async () => {
     const Counter = () => {
       const [count, setCount] = useStore("count");
-      const onClick = (e: any) => {
+      const onClick = () => {
         setCount(async (num: number) => {
           await new Promise((done) => setTimeout(done, 100));
           return num + 2;
@@ -112,7 +112,7 @@ describe("useStore() prebuilt functions", () => {
   it("can use a prebuilt function", async () => {
     const Counter = () => {
       const [count, { add }] = useStore<number>("count");
-      return <div onClick={(e) => add(2)}>{count}</div>;
+      return <div onClick={() => add(2)}>{count}</div>;
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
@@ -124,7 +124,7 @@ describe("useStore() prebuilt functions", () => {
     const Counter = () => {
       const [count, { add }] = useStore<number>("count");
       return (
-        <div onClick={(e) => (add as any)((num: any) => Promise.resolve(2))}>
+        <div onClick={() => (add as any)(() => Promise.resolve(2))}>
           {count}
         </div>
       );
@@ -138,7 +138,7 @@ describe("useStore() prebuilt functions", () => {
   it.skip("can use a prebuilt function with a callback", async () => {
     const Counter = () => {
       const [count, { add }] = useStore<number>("count");
-      return <div onClick={(e) => (add as any)((num: any) => 2)}>{count}</div>;
+      return <div onClick={() => (add as any)(() => 2)}>{count}</div>;
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
@@ -150,7 +150,7 @@ describe("useStore() prebuilt functions", () => {
     const Counter = () => {
       const [count, { add }] = useStore<number>("count");
       return (
-        <div onClick={(e) => (add as any)(Promise.resolve(2))}>{count}</div>
+        <div onClick={() => (add as any)(Promise.resolve(2))}>{count}</div>
       );
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
@@ -165,7 +165,7 @@ describe("useSelector() and useActions()", () => {
     const Counter = () => {
       const count = useSelector((state) => state.count);
       const { add } = useActions<number>("count");
-      return <div onClick={(e) => add(2)}>{count}</div>;
+      return <div onClick={() => add(2)}>{count}</div>;
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
@@ -177,7 +177,7 @@ describe("useSelector() and useActions()", () => {
     const Counter = () => {
       const count = useSelector((state) => state.count);
       const { add } = useActions<number>("count");
-      return <div onClick={(e) => (add as any)((num: any) => 2)}>{count}</div>;
+      return <div onClick={() => (add as any)(() => 2)}>{count}</div>;
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
@@ -190,7 +190,7 @@ describe("useSelector() and useActions()", () => {
       const count = useSelector((state) => state.count);
       const { add } = useActions<number>("count");
       return (
-        <div onClick={(e) => (add as any)(Promise.resolve(2))}>{count}</div>
+        <div onClick={() => (add as any)(Promise.resolve(2))}>{count}</div>
       );
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
@@ -203,7 +203,7 @@ describe("useSelector() and useActions()", () => {
     const Counter = () => {
       const count = useSelector((state) => state.count);
       const { add } = useActions<number>("count");
-      return <div onClick={(e) => (add as any)(async () => 2)}>{count}</div>;
+      return <div onClick={() => (add as any)(async () => 2)}>{count}</div>;
     };
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);

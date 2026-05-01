@@ -94,7 +94,7 @@ export const Context = createContext<StoreContextType>({} as StoreContextType);
 const { Provider } = Context;
 
 // Helpers to get and set using the dot notation selector
-const dotGet = <Value = unknown>(obj: any, sel?: Selector<Value>): Value => {
+const dotGet = <Value = unknown,>(obj: any, sel?: Selector<Value>): Value => {
   if (!sel) return obj;
   if (typeof sel === "function") return sel(obj);
   return sel
