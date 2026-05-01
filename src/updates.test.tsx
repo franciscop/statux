@@ -1,9 +1,10 @@
 import React, { memo } from "react";
-import $ from "react-test";
+import $, { until } from "react-test";
+
+const delay = (time: number) => new Promise((done) => setTimeout(done, time));
 
 import Store, { useActions, useSelector, useStore } from "./";
 
-const delay = (time: number) => new Promise((done) => setTimeout(done, time));
 
 // This extracts the state from the selector with the provided function
 const Reader = ({ query = "count" }: { query?: any }) => {
@@ -124,7 +125,7 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
-    await $todo.delay(200);
+    await until(() => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>");
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 
@@ -170,7 +171,7 @@ describe("useStore()", () => {
       "<ul><li>abc</li><li>def</li><li>ghi</li></ul>",
     );
     await $todo.find("button").click();
-    await $todo.delay(200);
+    await until(() => $todo.find("ul").html() === "<ul><li>abc</li><li>ghi</li></ul>");
     expect($todo.find("ul").html()).toBe("<ul><li>abc</li><li>ghi</li></ul>");
   });
 });

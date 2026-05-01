@@ -1,5 +1,4 @@
-import React from "react";
-import $ from "react-test";
+import $, { until } from "react-test";
 
 import Store, { useActions, useSelector, useStore } from "./";
 
@@ -104,7 +103,7 @@ describe("useStore()", () => {
     const $counter = $(<Store count={1} children={<Counter />} />);
     expect($counter.html()).toBe(`<div>1</div>`);
     await $counter.click();
-    await $counter.delay(200);
+    await until(() => $counter.html() === `<div>3</div>`);
     expect($counter.html()).toBe(`<div>3</div>`);
   });
 });

@@ -3,7 +3,6 @@ import $ from "react-test";
 
 import Store, { useSelector, useStore } from "./";
 
-const delay = (time: number) => new Promise((done) => setTimeout(done, time));
 const baseUser = { id: 1, name: "John", friends: ["Maria"] };
 
 const User = ({
@@ -117,9 +116,7 @@ describe("User", () => {
         </App>,
       );
       expect($user.html()).toEqual(`<div>Francisco - 10 - 1</div>`);
-      await delay(100);
       await $user.click();
-      await delay(100);
       expect($user.html()).toEqual(`<div>test - 10 - 1</div>`);
       expect(user).toEqual({ id: 1, age: 10, name: "Francisco" }); // No mutation check
     });
@@ -145,13 +142,9 @@ describe("User", () => {
       </App>,
     );
     expect($user.html()).toEqual(`<div>Francisco - 1</div>`);
-    await delay(100);
     await $user.click();
-    await delay(100);
     expect($user.html()).toEqual(`<div>test - 2</div>`);
-    await delay(100);
     await $user.click();
-    await delay(100);
     expect($user.html()).toEqual(`<div>Francisco - 3</div>`);
   });
 });
