@@ -3,9 +3,9 @@
   "version": "2.0.1",
   "description": "A minimal state management library with React Hooks and immutable state",
   "homepage": "https://statux.dev/",
-  "repository": "https://github.com/franciscop/statux.git",
+  "repository": "github:franciscop/statux",
+  "author": "Francisco Presencia <public@francisco.io> (https://francisco.io/)",
   "funding": "https://www.paypal.me/franciscopresencia/19",
-  "author": "Francisco Presencia <pubalic@francisco.io> (https://francisco.io/)",
   "license": "MIT",
   "keywords": [
     "state",
@@ -30,6 +30,14 @@
   "files": [
     "index.d.ts"
   ],
+  "documentation.page": {
+    "menu": {
+      "Author": "https://francisco.io/",
+      "Donate": "https://www.paypal.me/franciscopresencia/19",
+      "npm": "https://www.npmjs.com/package/statux",
+      "Github": "https://github.com/franciscop/statux"
+    }
+  },
   "devDependencies": {
     "@types/node": "^25.5.2",
     "@types/react": "^18.3.4",
@@ -41,7 +49,7 @@
     "prettier": "^3.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-test": "^0.24.3",
+    "react-test": "^0.24.12",
     "terser": "^5.46.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.3",
@@ -49,13 +57,5 @@
   },
   "peerDependencies": {
     "react": ">=18.0.0"
-  },
-  "documentation": {
-    "menu": {
-      "Author": "https://francisco.io/",
-      "Donate": "https://www.paypal.me/franciscopresencia/19",
-      "npm": "https://www.npmjs.com/package/statux",
-      "Github": "https://github.com/franciscop/statux"
-    }
   }
 }
