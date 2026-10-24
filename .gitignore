@@ -1,22 +1,16 @@
-# APP
-*.db
+# PROJECT (project-specific; put new rules and their ! negations here)
 
-# LOCKFILES (remove for apps)
+# LOCKFILES (libraries don't commit them)
 package-lock.json
 bun.lock
+yarn.lock
+pnpm-lock.yaml
 
 # BUILD OUTPUTS
 dist/
 build/
-.next/
-out/
 coverage/
-.nyc_output/
 .cache/
-.parcel-cache/
-.netlify/
-.vercel/
-.types/
 
 # OS / SYSTEM
 .DS_Store
@@ -34,29 +28,12 @@ coverage/
 
 # DEPENDENCIES
 node_modules/
-jspm_packages/
-.pnp
-.pnp.js
 
 # LOGS
-logs/
+/logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
 # ENV
-.env
-
-# RUNTIME
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# MISC
-.npm
-.node_repl_history
-.yarn-integrity
+.env*
+!.env.example
+!.env.sample
