@@ -60,9 +60,9 @@ export interface UnknownSetter<Value> {
 }
 export type Setter<Value> = Value extends any[]
   ? ArraySetter<Value>
-  : Value extends Number
+  : Value extends number
     ? NumberSetter<Value>
-    : Value extends Object
+    : Value extends {}
       ? ObjectSetter<Value>
       : UnknownSetter<Value>;
 export type Selector<Value> = string | ((state: any) => Value);
