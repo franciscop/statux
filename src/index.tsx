@@ -73,9 +73,9 @@ export interface UnknownSetter<Value> {
 
 export type Setter<Value> = Value extends any[]
   ? ArraySetter<Value>
-  : Value extends Number
+  : Value extends number
     ? NumberSetter<Value>
-    : Value extends Object
+    : Value extends {}
       ? ObjectSetter<Value>
       : UnknownSetter<Value>;
 
@@ -235,7 +235,7 @@ export const useSelector = <Value = any,>(sel?: Selector<Value>): Value => {
         // before the parent has removed that child, having invalid state and
         // throwing: https://kaihao.dev/posts/Stale-props-and-zombie-children-in-Redux
         forceUpdate({});
-      } catch (error) {}
+      } catch {}
     });
   }, [sel]);
 
